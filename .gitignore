@@ -1,0 +1,4 @@
+.ipynb_checkpoints/
+.envrc
+.envrc_template
+/day_2/data-engineering-rag/data/de-zoomcamp-processed.json
