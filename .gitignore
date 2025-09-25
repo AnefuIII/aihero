@@ -2,3 +2,5 @@
 .envrc
 .envrc_template
 /day_2/data-engineering-rag/data/de-zoomcamp-processed.json
+/project/.env
+/project/data/autogen_data_processed.json
