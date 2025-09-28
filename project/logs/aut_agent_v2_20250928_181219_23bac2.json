@@ -1,0 +1,133 @@
+{
+  "agent_name": "aut_agent_v2",
+  "system_prompt": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "tools": [
+    "hybrid_search"
+  ],
+  "messages": [
+    {
+      "parts": [
+        {
+          "content": "How does the `LangChainToolAdapter` class facilitate the use of LangChain tools in AutoGen?",
+          "timestamp": "2025-09-28T18:12:18.123776+00:00",
+          "part_kind": "user-prompt"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "args": "{\"query\":\"LangChainToolAdapter class AutoGen\"}",
+          "tool_call_id": "call_SDJht5Ann92zk0hgGawenuE5",
+          "part_kind": "tool-call"
+        }
+      ],
+      "usage": {
+        "input_tokens": 203,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 21,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:18+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "tool_calls"
+      },
+      "provider_response_id": "chatcmpl-CKqAceCU2efWjTpHhBIhFCvZLmK4X",
+      "finish_reason": "tool_call"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "content": [
+            {
+              "filename": "python/packages/autogen-ext/src/autogen_ext/tools/langchain/__init__.py",
+              "content": "from ._langchain_adapter import LangChainToolAdapter\n\n__all__ = [\"LangChainToolAdapter\"]\n"
+            },
+            {
+              "filename": "python/packages/autogen-ext/README.md",
+              "content": "# AutoGen Extensions\n\n- [Documentation](https://microsoft.github.io/autogen/stable/user-guide/extensions-user-guide/index.html)\n\nAutoGen is designed to be extensible. The `autogen-ext` package contains many different component implementations maintained by the AutoGen project. However, we strongly encourage others to build their own components and publish them as part of the ecosytem."
+            },
+            {
+              "filename": "python/packages/autogen-studio/README.md",
+              "content": "# AutoGen Studio\n\n[![PyPI version](https://badge.fury.io/py/autogenstudio.svg)](https://badge.fury.io/py/autogenstudio)\n![PyPI - Downloads](https://img.shields.io/pypi/dm/autogenstudio)\n\n![ARA](https://media.githubusercontent.com/media/microsoft/autogen/refs/heads/main/python/packages/autogen-studio/docs/ags_screen.png)\n\nAutoGen Studio is an AutoGen-powered AI app (user interface) to help you rapidly prototype AI agents, enhance them with skills, compose them into workflows and interact with them to accomplish tasks. It is built on top of the [AutoGen](https://microsoft.github.io/autogen) framework, which is a toolkit for building AI agents.\n\nCode for AutoGen Studio is on GitHub at [microsoft/autogen](https://github.com/microsoft/autogen/tree/main/python/packages/autogen-studio)\n\n> [!WARNING]\n> AutoGen Studio is under active development and is currently not meant to be a production-ready app. Expect breaking changes in upcoming releases. [Documentation](https://microsoft.github.io/autogen/docs/autogen-studio/getting-started) and the `README.md` might be outdated.\n\n## Updates\n\n- **2024-11-14:** AutoGen Studio is being rewritten to use the updated AutoGen 0.4.0 api AgentChat api.\n- **2024-04-17:** April 17: AutoGen Studio database layer is now rewritten to use [SQLModel](https://sqlmodel.tiangolo.com/) (Pydantic + SQLAlchemy). This provides entity linking (skills, models, agents and workflows are linked via association tables) and supports multiple [database backend dialects](https://docs.sqlalchemy.org/en/20/dialects/) supported in SQLAlchemy (SQLite, PostgreSQL, MySQL, Oracle, Microsoft SQL Server). The backend database can be specified a `--database-uri` argument when running the application. For example, `autogenstudio ui --database-uri sqlite:///database.sqlite` for SQLite and `autogenstudio ui --database-uri postgresql+psycopg://user:password@localhost/dbname` for PostgreSQL.\n- **2024-03-12:** Default directory for AutoGen Studio is now /home/\\<USER\\>/.autogenst"
+            },
+            {
+              "filename": "dotnet/website/articles/AutoGen.SemanticKernel/AutoGen-SemanticKernel-Overview.md",
+              "content": "## AutoGen.SemanticKernel Overview\n\nAutoGen.SemanticKernel is a package that provides seamless integration with Semantic Kernel. It provides the following agents:\n- @AutoGen.SemanticKernel.SemanticKernelAgent: A slim wrapper agent over `Kernel` that only support original `ChatMessageContent` type via `IMessage<ChatMessageContent>`. To support more AutoGen built-in message type, register the agent with @AutoGen.SemanticKernel.SemanticKernelChatMessageContentConnector.\n- @AutoGen.SemanticKernel.SemanticKernelChatCompletionAgent: A slim wrapper agent over `Microsoft.SemanticKernel.Agents.ChatCompletionAgent`.\n\nAutoGen.SemanticKernel also provides the following middleware:\n- @AutoGen.SemanticKernel.SemanticKernelChatMessageContentConnector: A connector that convert the message from AutoGen built-in message types to `ChatMessageContent` and vice versa. At the current stage, it only supports conversation between @AutoGen.Core.TextMessage, @AutoGen.Core.ImageMessage and @AutoGen.Core.MultiModalMessage. Function call message type like @AutoGen.Core.ToolCallMessage and @AutoGen.Core.ToolCallResultMessage are not supported yet.\n- @AutoGen.SemanticKernel.KernelPluginMiddleware: A middleware that allows you to use semantic kernel plugins in other AutoGen agents like @AutoGen.OpenAI.OpenAIChatAgent.\n\n### Get start with AutoGen.SemanticKernel\n\nTo get start with AutoGen.SemanticKernel, firstly, follow the [installation guide](../Installation.md) to make sure you add the AutoGen feed correctly. Then add `AutoGen.SemanticKernel` package to your project file.\n\n```xml\n<ItemGroup>\n    <PackageReference Include=\"AutoGen.SemanticKernel\" Version=\"AUTOGEN_VERSION\" />\n</ItemGroup>\n```"
+            },
+            {
+              "filename": "python/packages/autogen-ext/src/autogen_ext/tools/langchain/_langchain_adapter.py",
+              "content": "from __future__ import annotations\n\nimport asyncio\nimport inspect\nfrom typing import TYPE_CHECKING, Any, Callable, Dict, Type, cast\n\nfrom autogen_core import CancellationToken\nfrom autogen_core.tools import BaseTool\nfrom pydantic import BaseModel, Field, create_model\n\nif TYPE_CHECKING:\n    from langchain_core.tools import BaseTool as LangChainTool\n\n\nclass LangChainToolAdapter(BaseTool[BaseModel, Any]):\n    \"\"\"Allows you to wrap a LangChain tool and make it available to AutoGen.\n\n    .. note::\n\n        This class requires the :code:`langchain` extra for the :code:`autogen-ext` package.\n\n        .. code-block:: bash\n\n            pip install -U \"autogen-ext[langchain]\"\n\n\n    Args:\n        langchain_tool (LangChainTool): A LangChain tool to wrap\n\n    Examples:\n\n        Use the `PythonAstREPLTool` from the `langchain_experimental` package to\n        create a tool that allows you to interact with a Pandas DataFrame.\n\n        .. code-block:: python\n\n            import asyncio\n            import pandas as pd\n            from langchain_experimental.tools.python.tool import PythonAstREPLTool\n            from autogen_ext.tools.langchain import LangChainToolAdapter\n            from autogen_ext.models.openai import OpenAIChatCompletionClient\n            from autogen_agentchat.messages import TextMessage\n            from autogen_agentchat.agents import AssistantAgent\n            from autogen_agentchat.ui import Console\n            from autogen_core import CancellationToken\n\n\n            async def main() -> None:\n                df = pd.read_csv(\"https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv\")  # type: ignore\n                tool = LangChainToolAdapter(PythonAstREPLTool(locals={\"df\": df}))\n                model_client = OpenAIChatCompletionClient(model=\"gpt-4o\")\n                agent = AssistantAgent(\n                    \"assistant\",\n                    tools=[tool],\n                    model_client=model_client,\n                    system_message=\""
+            },
+            {
+              "filename": "python/packages/autogen-core/src/autogen_core/_telemetry/_constants.py",
+              "content": "NAMESPACE = \"autogen\"\n"
+            },
+            {
+              "filename": "python/samples/core_streaming_handoffs_fastapi/models.py",
+              "content": "from typing import List\nfrom autogen_core.models import LLMMessage\nfrom pydantic import BaseModel\n\n\nclass UserLogin(BaseModel):\n    pass\n\nclass UserTask(BaseModel):\n    context: List[LLMMessage]\n\nclass AgentResponse(BaseModel):\n    reply_to_topic_type: str\n    context: List[LLMMessage]\n"
+            }
+          ],
+          "tool_call_id": "call_SDJht5Ann92zk0hgGawenuE5",
+          "metadata": null,
+          "timestamp": "2025-09-28T18:12:19.101032+00:00",
+          "part_kind": "tool-return"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "content": "The `LangChainToolAdapter` class facilitates the integration of LangChain tools into the AutoGen framework, allowing developers to leverage the functionalities of LangChain while building AI agents using AutoGen. Here are the key features and functionalities of the `LangChainToolAdapter`:\n\n1. **Wrapper for LangChain Tools**: The primary purpose of the `LangChainToolAdapter` is to act as a wrapper around LangChain tools, making them accessible within the AutoGen environment. This enables the use of existing LangChain functionality directly in AutoGen applications.\n\n2. **Constructor Parameters**: The class accepts a `langchain_tool` parameter, which is an instance of a LangChain tool. This allows the specific tool to be adapted for use in the AutoGen framework.\n\n3. **Installation Requirement**: To use `LangChainToolAdapter`, you must install the `autogen-ext` package with the `langchain` extra by running:\n   ```bash\n   pip install -U \"autogen-ext[langchain]\"\n   ```\n\n4. **Example Usage**: An example provided in the documentation shows how to create an instance of the `LangChainToolAdapter` using the `PythonAstREPLTool` from the LangChain package. This setup allows interaction with a Pandas DataFrame, illustrating how the adapter can facilitate tool integration for data manipulation in an AutoGen project.\n\nHere\u2019s a snippet of how it might look in code:\n```python\nfrom langchain_experimental.tools.python.tool import PythonAstREPLTool\nfrom autogen_ext.tools.langchain import LangChainToolAdapter\n\nasync def main() -> None:\n    df = pd.read_csv(\"https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv\")\n    tool = LangChainToolAdapter(PythonAstREPLTool(locals={\"df\": df}))\n```\n\nThis class plays a crucial role in enhancing the functionality and versatility of AutoGen by enabling the use of specialized tools provided by LangChain, thereby enriching the capabilities of AI agents.\n\nFor more detailed information, you can refer to the source code of the `LangChainToolAdapter` in the following file: [LangChainToolAdapter Source Code](https://github.com/DataTalksClub/faq/blob/main/python/packages/autogen-ext/src/autogen_ext/tools/langchain/_langchain_adapter.py).",
+          "id": null,
+          "part_kind": "text"
+        }
+      ],
+      "usage": {
+        "input_tokens": 1918,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 475,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:19+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "stop"
+      },
+      "provider_response_id": "chatcmpl-CKqAdQTr416LaKkWAjyUzL1pHA6UH",
+      "finish_reason": "stop"
+    }
+  ],
+  "source": "ai-generated"
+}

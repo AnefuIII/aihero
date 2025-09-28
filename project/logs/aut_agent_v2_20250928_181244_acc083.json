@@ -1,0 +1,125 @@
+{
+  "agent_name": "aut_agent_v2",
+  "system_prompt": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "tools": [
+    "hybrid_search"
+  ],
+  "messages": [
+    {
+      "parts": [
+        {
+          "content": "What changes should I make in the code if I want to enable safe search when using the `google_search` function?",
+          "timestamp": "2025-09-28T18:12:42.943276+00:00",
+          "part_kind": "user-prompt"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "args": "{\"query\":\"enable safe search google_search function\"}",
+          "tool_call_id": "call_iFD936pIA3vub6D9CHaghvwD",
+          "part_kind": "tool-call"
+        }
+      ],
+      "usage": {
+        "input_tokens": 206,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 20,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:43+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "tool_calls"
+      },
+      "provider_response_id": "chatcmpl-CKqB1fVwKrKfRVd0TJWizZqXYAJlh",
+      "finish_reason": "tool_call"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "content": [
+            {
+              "filename": "dotnet/website/articles/Create-type-safe-function-call.md",
+              "content": "## Create type-safe function call using AutoGen.SourceGenerator\n\n`AutoGen` provides a source generator to easness the trouble of manually craft function definition and function call wrapper from a function. To use this feature, simply add the `AutoGen.SourceGenerator` package to your project and decorate your function with @AutoGen.Core.FunctionAttribute.\n\n```bash\ndotnet add package AutoGen.SourceGenerator\n```\n\n> [!NOTE]\n> It's recommended to enable structural xml document support by setting `GenerateDocumentationFile` property to true in your project file. This allows source generator to leverage the documentation of the function when generating the function definition.\n\n```xml\n<PropertyGroup>\n    <!-- This enables structural xml document support -->\n    <GenerateDocumentationFile>true</GenerateDocumentationFile>\n</PropertyGroup>\n```\n\nThen, create a `public partial` class to host the methods you want to use in AutoGen agents. The method has to be a `public` instance method and its return type must be `Task<string>`. After the methods is defined, mark them with @AutoGen.FunctionAttribute attribute:\n\n> [!NOTE]\n> A `public partial` class is required for the source generator to generate code.\n> The method has to be a `public` instance method and its return type must be `Task<string>`.\n> Mark the method with @AutoGen.Core.FunctionAttribute attribute.\n\nFirstly, import the required namespaces:\n\n[!code-csharp[](../../samples/AgentChat/Autogen.Basic.Sample/CodeSnippet/TypeSafeFunctionCallCodeSnippet.cs?name=weather_report_using_statement)]\n\nThen, create a `WeatherReport` function and mark it with @AutoGen.Core.FunctionAttribute:\n\n[!code-csharp[](../../samples/AgentChat/Autogen.Basic.Sample/CodeSnippet/TypeSafeFunctionCallCodeSnippet.cs?name=weather_report)]\n\nThe source generator will generate the @AutoGen.Core.FunctionContract and function call wrapper for `WeatherReport` in another partial class based on its signature and structural comments. The @AutoGen.Core.FunctionCont"
+            },
+            {
+              "filename": "python/packages/autogen-studio/autogenstudio/gallery/tools/google_search.py",
+              "content": "import os\nfrom typing import Dict, List, Optional\nfrom urllib.parse import urljoin\n\nimport html2text\nimport httpx\nfrom autogen_core.code_executor import ImportFromModule\nfrom autogen_core.tools import FunctionTool\nfrom bs4 import BeautifulSoup\n\n\nasync def google_search(\n    query: str,\n    num_results: int = 3,\n    include_snippets: bool = True,\n    include_content: bool = True,\n    content_max_length: Optional[int] = 10000,\n    language: str = \"en\",\n    country: Optional[str] = None,\n    safe_search: bool = True,\n) -> List[Dict[str, str]]:\n    \"\"\"\n    Perform a Google search using the Custom Search API and optionally fetch webpage content.\n\n    Args:\n        query: Search query string\n        num_results: Number of results to return (max 10)\n        include_snippets: Include result snippets in output\n        include_content: Include full webpage content in markdown format\n        content_max_length: Maximum length of webpage content (if included)\n        language: Language code for search results (e.g., en, es, fr)\n        country: Optional country code for search results (e.g., us, uk)\n        safe_search: Enable safe search filtering\n\n    Returns:\n        List[Dict[str, str]]: List of search results, each containing:\n            - title: Result title\n            - link: Result URL\n            - snippet: Result description (if include_snippets=True)\n            - content: Webpage content in markdown (if include_content=True)\n    \"\"\"\n    api_key = os.getenv(\"GOOGLE_API_KEY\")\n    cse_id = os.getenv(\"GOOGLE_CSE_ID\")\n\n    if not api_key or not cse_id:\n        raise ValueError(\"Missing required environment variables. Please set GOOGLE_API_KEY and GOOGLE_CSE_ID.\")\n\n    num_results = min(max(1, num_results), 10)\n\n    async def fetch_page_content(url: str, max_length: Optional[int] = 50000) -> str:\n        \"\"\"Helper function to fetch and convert webpage content to markdown\"\"\"\n        headers = {\"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\"}\n"
+            },
+            {
+              "filename": "python/packages/autogen-studio/autogenstudio/gallery/tools/bing_search.py",
+              "content": "guage code for search results (e.g., 'en', 'es', 'fr')\n        country: Optional market code for search results (e.g., 'us', 'uk')\n        safe_search: SafeSearch setting ('off', 'moderate', or 'strict')\n        response_filter: Type of results ('webpages', 'news', 'images', or 'videos')\n\n    Returns:\n        List[Dict[str, str]]: List of search results\n\n    Raises:\n        ValueError: If API credentials are invalid or request fails\n    \"\"\"\n    # Get and validate API key\n    api_key = os.getenv(\"BING_SEARCH_KEY\", \"\").strip()\n\n    if not api_key:\n        raise ValueError(\n            \"BING_SEARCH_KEY environment variable is not set. \" \"Please obtain an API key from Azure Portal.\"\n        )\n\n    # Validate safe_search parameter\n    valid_safe_search = [\"off\", \"moderate\", \"strict\"]\n    if safe_search.lower() not in valid_safe_search:\n        raise ValueError(f\"Invalid safe_search value. Must be one of: {', '.join(valid_safe_search)}\")\n\n    # Validate response_filter parameter\n    valid_filters = [\"webpages\", \"news\", \"images\", \"videos\"]\n    if response_filter.lower() not in valid_filters:\n        raise ValueError(f\"Invalid response_filter value. Must be one of: {', '.join(valid_filters)}\")\n\n    async def fetch_page_content(url: str, max_length: Optional[int] = 50000) -> str:\n        \"\"\"Helper function to fetch and convert webpage content to markdown\"\"\"\n        headers = {\"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\"}\n\n        try:\n            async with httpx.AsyncClient() as client:\n                response = await client.get(url, headers=headers, timeout=10)\n                response.raise_for_status()\n\n                soup = BeautifulSoup(response.text, \"html.parser\")\n\n                # Remove script and style elements\n                for script in soup([\"script\", \"style\"]):\n                    script.decompose()\n\n                # Convert relative URLs to absolute\n                for tag in soup.find_all([\"a\", \"img\"]):\n                 "
+            },
+            {
+              "filename": "python/docs/src/user-guide/agentchat-user-guide/examples/company-research.ipynb",
+              "content": "ID =xxx\\n\",\n                \"GOOGLE_API_KEY=xxx \\n\",\n                \"``` \\n\",\n                \"\\n\",\n                \"Also install required libraries \\n\",\n                \"\\n\",\n                \"```\\n\",\n                \"pip install yfinance matplotlib pytz numpy pandas python-dotenv requests bs4\\n\",\n                \"```\"\n            ]\n        },\n        {\n            \"cell_type\": \"code\",\n            \"execution_count\": 7,\n            \"metadata\": {},\n            \"outputs\": [],\n            \"source\": [\n                \"#!pip install yfinance matplotlib pytz numpy pandas python-dotenv requests bs4\\n\",\n                \"\\n\",\n                \"\\n\",\n                \"def google_search(query: str, num_results: int = 2, max_chars: int = 500) -> list:  # type: ignore[type-arg]\\n\",\n                \"    import os\\n\",\n                \"    import time\\n\",\n                \"\\n\",\n                \"    import requests\\n\",\n                \"    from bs4 import BeautifulSoup\\n\",\n                \"    from dotenv import load_dotenv\\n\",\n                \"\\n\",\n                \"    load_dotenv()\\n\",\n                \"\\n\",\n                \"    api_key = os.getenv(\\\"GOOGLE_API_KEY\\\")\\n\",\n                \"    search_engine_id = os.getenv(\\\"GOOGLE_SEARCH_ENGINE_ID\\\")\\n\",\n                \"\\n\",\n                \"    if not api_key or not search_engine_id:\\n\",\n                \"        raise ValueError(\\\"API key or Search Engine ID not found in environment variables\\\")\\n\",\n                \"\\n\",\n                \"    url = \\\"https://customsearch.googleapis.com/customsearch/v1\\\"\\n\",\n                \"    params = {\\\"key\\\": str(api_key), \\\"cx\\\": str(search_engine_id), \\\"q\\\": str(query), \\\"num\\\": str(num_results)}\\n\",\n                \"\\n\",\n                \"    response = requests.get(url, params=params)\\n\",\n                \"\\n\",\n                \"    if response.status_code != 200:\\n\",\n                \"        print(response.json())\\n\",\n                \"        raise Exception(f\\\"Error in API request: {response.sta"
+            },
+            {
+              "filename": "python/docs/src/user-guide/agentchat-user-guide/examples/literature-review.ipynb",
+              "content": "port load_dotenv\\n\",\n                \"\\n\",\n                \"    load_dotenv()\\n\",\n                \"\\n\",\n                \"    api_key = os.getenv(\\\"GOOGLE_API_KEY\\\")\\n\",\n                \"    search_engine_id = os.getenv(\\\"GOOGLE_SEARCH_ENGINE_ID\\\")\\n\",\n                \"\\n\",\n                \"    if not api_key or not search_engine_id:\\n\",\n                \"        raise ValueError(\\\"API key or Search Engine ID not found in environment variables\\\")\\n\",\n                \"\\n\",\n                \"    url = \\\"https://www.googleapis.com/customsearch/v1\\\"\\n\",\n                \"    params = {\\\"key\\\": api_key, \\\"cx\\\": search_engine_id, \\\"q\\\": query, \\\"num\\\": num_results}\\n\",\n                \"\\n\",\n                \"    response = requests.get(url, params=params)  # type: ignore[arg-type]\\n\",\n                \"\\n\",\n                \"    if response.status_code != 200:\\n\",\n                \"        print(response.json())\\n\",\n                \"        raise Exception(f\\\"Error in API request: {response.status_code}\\\")\\n\",\n                \"\\n\",\n                \"    results = response.json().get(\\\"items\\\", [])\\n\",\n                \"\\n\",\n                \"    def get_page_content(url: str) -> str:\\n\",\n                \"        try:\\n\",\n                \"            response = requests.get(url, timeout=10)\\n\",\n                \"            soup = BeautifulSoup(response.content, \\\"html.parser\\\")\\n\",\n                \"            text = soup.get_text(separator=\\\" \\\", strip=True)\\n\",\n                \"            words = text.split()\\n\",\n                \"            content = \\\"\\\"\\n\",\n                \"            for word in words:\\n\",\n                \"                if len(content) + len(word) + 1 > max_chars:\\n\",\n                \"                    break\\n\",\n                \"                content += \\\" \\\" + word\\n\",\n                \"            return content.strip()\\n\",\n                \"        except Exception as e:\\n\",\n                \"            print(f\\\"Error fetching {url}: {str(e)}\\\")\\n\",\n  "
+            }
+          ],
+          "tool_call_id": "call_iFD936pIA3vub6D9CHaghvwD",
+          "metadata": null,
+          "timestamp": "2025-09-28T18:12:43.809392+00:00",
+          "part_kind": "tool-return"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "content": "To enable safe search when using the `google_search` function, you can set the `safe_search` parameter to `True` when calling the function. Here's how you should modify the function call:\n\n```python\nresults = await google_search(query=\"your search query\", num_results=3, include_snippets=True, include_content=True, safe_search=True)\n```\n\nThe `safe_search` parameter is included in the function definition and you can set it according to your needs. When set to `True`, safe search filtering will be applied to your searches.\n\nHere's the relevant part of the code from the `google_search` function:\n\n```python\nsafe_search: bool = True,\n```\n\nThis indicates that the default value is `True`, enabling safe search if you do not specify a different value.\n\nFor additional details, you can check the source in the `google_search.py` file [here](https://github.com/DataTalksClub/faq/blob/main/python/packages/autogen-studio/autogenstudio/gallery/tools/google_search.py).",
+          "id": null,
+          "part_kind": "text"
+        }
+      ],
+      "usage": {
+        "input_tokens": 2875,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 209,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:44+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "stop"
+      },
+      "provider_response_id": "chatcmpl-CKqB2jJ2i8kC4PRNMeUIS41FnRBp6",
+      "finish_reason": "stop"
+    }
+  ],
+  "source": "ai-generated"
+}

@@ -1,0 +1,129 @@
+{
+  "agent_name": "aut_agent_v2",
+  "system_prompt": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "tools": [
+    "hybrid_search"
+  ],
+  "messages": [
+    {
+      "parts": [
+        {
+          "content": "What is the role of the WorkerAgent class in handling messages?",
+          "timestamp": "2025-09-28T17:55:33.400068+00:00",
+          "part_kind": "user-prompt"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "args": "{\"query\":\"WorkerAgent class handling messages\"}",
+          "tool_call_id": "call_N5kItex9bkr3cxjme5bz2tGF",
+          "part_kind": "tool-call"
+        }
+      ],
+      "usage": {
+        "input_tokens": 195,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 19,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T17:55:34+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "tool_calls"
+      },
+      "provider_response_id": "chatcmpl-CKpuQpeLMrYYsGKKV204hSZeVJXMx",
+      "finish_reason": "tool_call"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "content": [
+            {
+              "filename": "python/packages/autogen-agentchat/src/autogen_agentchat/messages.py",
+              "content": "     If you want to create a new message type, do not inherit from this class.\n        Instead, inherit from :class:`BaseChatMessage` or :class:`BaseAgentEvent`\n        to clarify the purpose of the message type.\n\n    \"\"\"\n\n    @abstractmethod\n    def to_text(self) -> str:\n        \"\"\"Convert the message content to a string-only representation\n        that can be rendered in the console and inspected by the user or conditions.\n        This is not used for creating text-only content for models.\n        For :class:`BaseChatMessage` types, use :meth:`to_model_text` instead.\"\"\"\n        ...\n\n    def dump(self) -> Mapping[str, Any]:\n        \"\"\"Convert the message to a JSON-serializable dictionary.\n\n        The default implementation uses the Pydantic model's\n        :meth:`model_dump` method to convert the message to a dictionary.\n        Datetime objects are automatically converted to ISO format strings\n        to ensure JSON serialization compatibility.\n        Override this method if you want to customize the serialization\n        process or add additional fields to the output.\n        \"\"\"\n        return self.model_dump(mode=\"json\")\n\n    @classmethod\n    def load(cls, data: Mapping[str, Any]) -> Self:\n        \"\"\"Create a message from a dictionary of JSON-serializable data.\n\n        The default implementation uses the Pydantic model's\n        :meth:`model_validate` method to create the message from the data.\n        Override this method if you want to customize the deserialization\n        process or add additional fields to the input data.\"\"\"\n        return cls.model_validate(data)\n\n\nclass BaseChatMessage(BaseMessage, ABC):\n    \"\"\"Abstract base class for chat messages.\n\n    .. note::\n\n        If you want to create a new message type that is used for agent-to-agent\n        communication, inherit from this class, or simply use\n        :class:`StructuredMessage` if your content type is a subclass of\n        Pydantic BaseModel.\n\n    This class is used for messages that are se"
+            },
+            {
+              "filename": "python/packages/autogen-core/src/autogen_core/_intervention.py",
+              "content": "from typing import Any, Protocol, final\n\nfrom ._agent_id import AgentId\nfrom ._message_context import MessageContext\n\n__all__ = [\n    \"DropMessage\",\n    \"InterventionHandler\",\n    \"DefaultInterventionHandler\",\n]\n\n\n@final\nclass DropMessage:\n    \"\"\"Marker type for signalling that a message should be dropped by an intervention handler. The type itself should be returned from the handler.\"\"\"\n\n    ...\n\n\nclass InterventionHandler(Protocol):\n    \"\"\"An intervention handler is a class that can be used to modify, log or drop messages that are being processed by the :class:`autogen_core.base.AgentRuntime`.\n\n    The handler is called when the message is submitted to the runtime.\n\n    Currently the only runtime which supports this is the :class:`autogen_core.base.SingleThreadedAgentRuntime`.\n\n    Note: Returning None from any of the intervention handler methods will result in a warning being issued and treated as \"no change\". If you intend to drop a message, you should return :class:`DropMessage` explicitly.\n\n    Example:\n\n    .. code-block:: python\n\n        from autogen_core import DefaultInterventionHandler, MessageContext, AgentId, SingleThreadedAgentRuntime\n        from dataclasses import dataclass\n        from typing import Any\n\n\n        @dataclass\n        class MyMessage:\n            content: str\n\n\n        class MyInterventionHandler(DefaultInterventionHandler):\n            async def on_send(self, message: Any, *, message_context: MessageContext, recipient: AgentId) -> MyMessage:\n                if isinstance(message, MyMessage):\n                    message.content = message.content.upper()\n                return message\n\n\n        runtime = SingleThreadedAgentRuntime(intervention_handlers=[MyInterventionHandler()])\n\n    \"\"\"\n\n    async def on_send(\n        self, message: Any, *, message_context: MessageContext, recipient: AgentId\n    ) -> Any | type[DropMessage]:\n        \"\"\"Called when a message is submitted to the AgentRuntime using :meth:`autogen_core.base.AgentRuntime.se"
+            },
+            {
+              "filename": "python/docs/src/user-guide/core-user-guide/framework/message-and-communication.ipynb",
+              "content": "essage handler\\n\",\n                \"({py:meth}`~autogen_core.Agent.on_message`) which should implement the agents message handling logic.\\n\",\n                \"If this message cannot be handled by the agent, the agent should raise a\\n\",\n                \"{py:class}`~autogen_core.exceptions.CantHandleException`.\\n\",\n                \"\\n\",\n                \"The base class {py:class}`~autogen_core.BaseAgent` provides no message handling logic\\n\",\n                \"and implementing the {py:meth}`~autogen_core.Agent.on_message` method directly is not recommended\\n\",\n                \"unless for the advanced use cases.\\n\",\n                \"\\n\",\n                \"Developers should start with implementing the {py:class}`~autogen_core.RoutedAgent` base class\\n\",\n                \"which provides built-in message routing capability.\\n\",\n                \"\\n\",\n                \"### Routing Messages by Type\\n\",\n                \"\\n\",\n                \"The {py:class}`~autogen_core.RoutedAgent` base class provides a mechanism\\n\",\n                \"for associating message types with message handlers \\n\",\n                \"with the {py:meth}`~autogen_core.components.message_handler` decorator,\\n\",\n                \"so developers do not need to implement the {py:meth}`~autogen_core.Agent.on_message` method.\\n\",\n                \"\\n\",\n                \"For example, the following type-routed agent responds to `TextMessage` and `ImageMessage`\\n\",\n                \"using different message handlers:\"\n            ]\n        },\n        {\n            \"cell_type\": \"code\",\n            \"execution_count\": 25,\n            \"metadata\": {},\n            \"outputs\": [],\n            \"source\": [\n                \"from autogen_core import AgentId, MessageContext, RoutedAgent, SingleThreadedAgentRuntime, message_handler\\n\",\n                \"\\n\",\n                \"\\n\",\n                \"class MyAgent(RoutedAgent):\\n\",\n                \"    @message_handler\\n\",\n                \"    async def on_text_message(self, message: TextMess"
+            },
+            {
+              "filename": "python/packages/autogen-agentchat/src/autogen_agentchat/agents/_assistant_agent.py",
+              "content": "iption: str\n    system_message: str | None = None\n    model_client_stream: bool = False\n    reflect_on_tool_use: bool\n    tool_call_summary_format: str\n    max_tool_iterations: int = Field(default=1, ge=1)\n    metadata: Dict[str, str] | None = None\n    structured_message_factory: ComponentModel | None = None\n\n\nclass AssistantAgent(BaseChatAgent, Component[AssistantAgentConfig]):\n    \"\"\"An agent that provides assistance with tool use.\n    The :meth:`on_messages` returns a :class:`~autogen_agentchat.base.Response`\n    in which :attr:`~autogen_agentchat.base.Response.chat_message` is the final\n    response message.\n\n    The :meth:`on_messages_stream` creates an async generator that produces\n    the inner messages as they are created, and the :class:`~autogen_agentchat.base.Response`\n    object as the last item before closing the generator.\n\n    The :meth:`BaseChatAgent.run` method returns a :class:`~autogen_agentchat.base.TaskResult`\n    containing the messages produced by the agent. In the list of messages,\n    :attr:`~autogen_agentchat.base.TaskResult.messages`,\n    the last message is the final response message.\n\n    The :meth:`BaseChatAgent.run_stream` method creates an async generator that produces\n    the inner messages as they are created, and the :class:`~autogen_agentchat.base.TaskResult`\n    object as the last item before closing the generator.\n\n    .. attention::\n\n        The caller must only pass the new messages to the agent on each call\n        to the :meth:`on_messages`, :meth:`on_messages_stream`, :meth:`BaseChatAgent.run`,\n        or :meth:`BaseChatAgent.run_stream` methods.\n        The agent maintains its state between calls to these methods.\n        Do not pass the entire conversation history to the agent on each call.\n\n    .. warning::\n        The assistant agent is not thread-safe or coroutine-safe.\n        It should not be shared between multiple tasks or coroutines, and it should\n        not call its methods concurrently.\n\n    The following diagr"
+            },
+            {
+              "filename": "python/docs/src/user-guide/core-user-guide/design-patterns/concurrent-agents.ipynb",
+              "content": " topic_id=TopicId(type=\\\"urgent\\\", source=\\\"default\\\"))\\n\",\n    \"\\n\",\n    \"await runtime.stop_when_idle()\"\n   ]\n  },\n  {\n   \"cell_type\": \"code\",\n   \"execution_count\": 53,\n   \"metadata\": {},\n   \"outputs\": [\n    {\n     \"name\": \"stdout\",\n     \"output_type\": \"stream\",\n     \"text\": [\n      \"TaskResponse(task_id='urgent-1', result='Results by Urgent Processor')\\n\",\n      \"TaskResponse(task_id='normal-1', result='Results by Normal Processor')\\n\"\n     ]\n    }\n   ],\n   \"source\": [\n    \"while not queue.empty():\\n\",\n    \"    print(await queue.get())\"\n   ]\n  },\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"## Direct Messages\\n\",\n    \"\\n\",\n    \"In contrast to the previous patterns, this pattern focuses on direct messages. Here we demonstrate two ways to send them:\\n\",\n    \"\\n\",\n    \"- Direct messaging between agents  \\n\",\n    \"- Sending messages from the runtime to specific agents  \\n\",\n    \"\\n\",\n    \"Things to consider in the example below:\\n\",\n    \"\\n\",\n    \"- Messages are addressed using the {py:class}`~autogen_core.components.AgentId`.  \\n\",\n    \"- The sender can expect to receive a response from the target agent.  \\n\",\n    \"- We register the `WorkerAgent` class only once; however, we send tasks to two different workers.\\n\",\n    \"    - How? As stated in [Agent lifecycle](../core-concepts/agent-identity-and-lifecycle.md#agent-lifecycle), when delivering a message using an {py:class}`~autogen_core.components.AgentId`, the runtime will either fetch the instance or create one if it doesn't exist. In this case, the runtime creates two instances of workers when sending those two messages.\"\n   ]\n  },\n  {\n   \"cell_type\": \"code\",\n   \"execution_count\": 36,\n   \"metadata\": {},\n   \"outputs\": [],\n   \"source\": [\n    \"class WorkerAgent(RoutedAgent):\\n\",\n    \"    @message_handler\\n\",\n    \"    async def on_task(self, message: Task, ctx: MessageContext) -> TaskResponse:\\n\",\n    \"        print(f\\\"{self.id} starting task {message.task_id}\\\")\\n\",\n    \"        await asynci"
+            },
+            {
+              "filename": "python/packages/autogen-ext/src/autogen_ext/runtimes/grpc/_worker_runtime_host_servicer.py",
+              "content": "ne:\n        # Receive messages from the client and process them.\n        async for message in request_iterator:\n            logger.info(f\"Received message from client {client_id}: {message}\")\n            await self._handle_message(message)\n\n    def __aiter__(self) -> AsyncIterator[SendT]:\n        return self\n\n    async def __anext__(self) -> SendT:\n        try:\n            return await self._send_queue.get()\n        except StopAsyncIteration:\n            await self._receiving_task\n            raise\n        except Exception as e:\n            logger.error(f\"Failed to get message from send queue: {e}\", exc_info=True)\n            await self._receiving_task\n            raise\n\n    @abstractmethod\n    async def _handle_message(self, message: ReceiveT) -> None:\n        pass\n\n    async def send(self, message: SendT) -> None:\n        await self._send_queue.put(message)\n\n\nclass CallbackChannelConnection(ChannelConnection[SendT, ReceiveT]):\n    def __init__(\n        self,\n        request_iterator: AsyncIterator[ReceiveT],\n        client_id: str,\n        handle_callback: Callable[[ReceiveT], Awaitable[None]],\n    ) -> None:\n        self._handle_callback = handle_callback\n        super().__init__(request_iterator, client_id)\n\n    async def _handle_message(self, message: ReceiveT) -> None:\n        await self._handle_callback(message)\n\n\nclass GrpcWorkerAgentRuntimeHostServicer(agent_worker_pb2_grpc.AgentRpcServicer):\n    \"\"\"A gRPC servicer that hosts message delivery service for agents.\"\"\"\n\n    def __init__(self) -> None:\n        self._data_connections: Dict[\n            ClientConnectionId, ChannelConnection[agent_worker_pb2.Message, agent_worker_pb2.Message]\n        ] = {}\n        self._control_connections: Dict[\n            ClientConnectionId, ChannelConnection[agent_worker_pb2.ControlMessage, agent_worker_pb2.ControlMessage]\n        ] = {}\n        self._agent_type_to_client_id_lock = asyncio.Lock()\n        self._agent_type_to_client_id: Dict[str, ClientConnectionId] = {}\n       "
+            }
+          ],
+          "tool_call_id": "call_N5kItex9bkr3cxjme5bz2tGF",
+          "metadata": null,
+          "timestamp": "2025-09-28T17:55:35.103173+00:00",
+          "part_kind": "tool-return"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "content": "The `WorkerAgent` class functions as an essential component in handling messages within a message-driven architecture, particularly aimed at processing tasks concurrently. Here's an overview of its role:\n\n1. **Message Handling Logic**: The `WorkerAgent` class extends the `RoutedAgent` class, allowing it to define specific handlers for incoming messages. These handlers are responsible for processing the messages based on their type. For example, it can have an `on_task` method that handles tasks, which allows the agent to respond appropriately to messages it receives.\n\n2. **Routing Messages**: The `WorkerAgent` utilizes a built-in message routing mechanism. Developers can associate different message types with their corresponding handlers using the `message_handler` decorator. This means that different types of messages can be directed to their respective handling methods without requiring developers to implement complex routing logic themselves.\n\n3. **Concurrency and State Management**: The agent maintains its internal state across method calls, which is crucial for handling task execution where the results of previous messages can influence the processing of current messages. It also handles messages in a manner that allows multiple tasks to be processed concurrently within the same agent instance.\n\n4. **Integration With Message Context**: Each message processed by the `WorkerAgent` includes a `MessageContext`, which provides additional information regarding the message lifecycle and context, enhancing the agent's ability to make decisions during processing.\n\n5. **Async Functionality**: The handling methods are asynchronous (`async def`), indicating that the `WorkerAgent` is designed to work efficiently with concurrent I/O operations, allowing it to handle messages in a non-blocking manner.\n\nIn summary, the `WorkerAgent` is pivotal as it not only manages message processing but also leverages routing capabilities and maintains state effectively for concurrent operations. This makes it suitable for applications requiring robust messaging frameworks, such as task processing systems.\n\nFor reference, you can review the detailed implementation and concepts related to the `WorkerAgent` class in the following source:\n- [WorkerAgent Class Documentation](https://github.com/DataTalksClub/faq/blob/main/python/docs/src/user-guide/core-user-guide/framework/message-and-communication.ipynb)",
+          "id": null,
+          "part_kind": "text"
+        }
+      ],
+      "usage": {
+        "input_tokens": 3367,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 435,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T17:55:35+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "stop"
+      },
+      "provider_response_id": "chatcmpl-CKpuR9UQP9Wg4fB1mV2Jvgfx36nZ4",
+      "finish_reason": "stop"
+    }
+  ],
+  "source": "ai-generated"
+}

@@ -1,0 +1,137 @@
+{
+  "agent_name": "aut_agent_v2",
+  "system_prompt": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "tools": [
+    "hybrid_search"
+  ],
+  "messages": [
+    {
+      "parts": [
+        {
+          "content": "What is the purpose of the `TokenLimitedChatCompletionContext` component in AutoGen?",
+          "timestamp": "2025-09-28T18:12:26.721449+00:00",
+          "part_kind": "user-prompt"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "args": "{\"query\":\"TokenLimitedChatCompletionContext AutoGen purpose\"}",
+          "tool_call_id": "call_Nty6YgmGvOpHU1jgbR8bZ8BJ",
+          "part_kind": "tool-call"
+        }
+      ],
+      "usage": {
+        "input_tokens": 200,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 22,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:27+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "tool_calls"
+      },
+      "provider_response_id": "chatcmpl-CKqAljeNJC5rzPKcEHaRWB6nzc1rf",
+      "finish_reason": "tool_call"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "content": [
+            {
+              "filename": "python/packages/autogen-core/src/autogen_core/model_context/__init__.py",
+              "content": "from ._buffered_chat_completion_context import BufferedChatCompletionContext\nfrom ._chat_completion_context import ChatCompletionContext, ChatCompletionContextState\nfrom ._head_and_tail_chat_completion_context import HeadAndTailChatCompletionContext\nfrom ._token_limited_chat_completion_context import TokenLimitedChatCompletionContext\nfrom ._unbounded_chat_completion_context import (\n    UnboundedChatCompletionContext,\n)\n\n__all__ = [\n    \"ChatCompletionContext\",\n    \"ChatCompletionContextState\",\n    \"UnboundedChatCompletionContext\",\n    \"BufferedChatCompletionContext\",\n    \"TokenLimitedChatCompletionContext\",\n    \"HeadAndTailChatCompletionContext\",\n]\n"
+            },
+            {
+              "filename": "python/packages/autogen-ext/README.md",
+              "content": "# AutoGen Extensions\n\n- [Documentation](https://microsoft.github.io/autogen/stable/user-guide/extensions-user-guide/index.html)\n\nAutoGen is designed to be extensible. The `autogen-ext` package contains many different component implementations maintained by the AutoGen project. However, we strongly encourage others to build their own components and publish them as part of the ecosytem."
+            },
+            {
+              "filename": "python/packages/autogen-studio/README.md",
+              "content": "# AutoGen Studio\n\n[![PyPI version](https://badge.fury.io/py/autogenstudio.svg)](https://badge.fury.io/py/autogenstudio)\n![PyPI - Downloads](https://img.shields.io/pypi/dm/autogenstudio)\n\n![ARA](https://media.githubusercontent.com/media/microsoft/autogen/refs/heads/main/python/packages/autogen-studio/docs/ags_screen.png)\n\nAutoGen Studio is an AutoGen-powered AI app (user interface) to help you rapidly prototype AI agents, enhance them with skills, compose them into workflows and interact with them to accomplish tasks. It is built on top of the [AutoGen](https://microsoft.github.io/autogen) framework, which is a toolkit for building AI agents.\n\nCode for AutoGen Studio is on GitHub at [microsoft/autogen](https://github.com/microsoft/autogen/tree/main/python/packages/autogen-studio)\n\n> [!WARNING]\n> AutoGen Studio is under active development and is currently not meant to be a production-ready app. Expect breaking changes in upcoming releases. [Documentation](https://microsoft.github.io/autogen/docs/autogen-studio/getting-started) and the `README.md` might be outdated.\n\n## Updates\n\n- **2024-11-14:** AutoGen Studio is being rewritten to use the updated AutoGen 0.4.0 api AgentChat api.\n- **2024-04-17:** April 17: AutoGen Studio database layer is now rewritten to use [SQLModel](https://sqlmodel.tiangolo.com/) (Pydantic + SQLAlchemy). This provides entity linking (skills, models, agents and workflows are linked via association tables) and supports multiple [database backend dialects](https://docs.sqlalchemy.org/en/20/dialects/) supported in SQLAlchemy (SQLite, PostgreSQL, MySQL, Oracle, Microsoft SQL Server). The backend database can be specified a `--database-uri` argument when running the application. For example, `autogenstudio ui --database-uri sqlite:///database.sqlite` for SQLite and `autogenstudio ui --database-uri postgresql+psycopg://user:password@localhost/dbname` for PostgreSQL.\n- **2024-03-12:** Default directory for AutoGen Studio is now /home/\\<USER\\>/.autogenst"
+            },
+            {
+              "filename": "python/packages/autogen-ext/src/autogen_ext/agents/azure/_azure_ai_agent.py",
+              "content": "in self._original_tools if t.name == tool_call.name), None)\n        if tool is None:\n            raise ValueError(f\"The tool '{tool_call.name}' is not available.\")\n        arguments = json.loads(tool_call.arguments)\n        result = await tool.run_json(arguments, cancellation_token, call_id=tool_call.id)\n        return tool.return_value_as_string(result)\n\n    async def _upload_files(\n        self,\n        file_paths: str | Iterable[str],\n        purpose: str = \"assistant\",\n        polling_interval: float = 0.5,\n        cancellation_token: Optional[CancellationToken] = None,\n    ) -> List[str]:\n        \"\"\"\n        Upload files to the Azure AI Assistant API.\n\n        This method handles uploading one or more files to be used by the agent\n        and tracks their IDs in the agent's state.\n\n        Args:\n            file_paths (str | Iterable[str]): Path(s) to file(s) to upload\n            purpose (str): The purpose of the file, defaults to \"assistant\"\n            polling_interval (float): Time to sleep between polling for file status\n            cancellation_token (Optional[CancellationToken]): Token for cancellation handling\n\n        Returns:\n            List[str]: List of file IDs for the uploaded files\n\n        Raises:\n            ValueError: If file upload fails\n        \"\"\"\n        if cancellation_token is None:\n            cancellation_token = CancellationToken()\n\n        await self._ensure_initialized()\n\n        if isinstance(file_paths, str):\n            file_paths = [file_paths]\n\n        file_ids: List[str] = []\n        for file_path in file_paths:\n            file_name = os.path.basename(file_path)\n\n            file: FileInfo = await cancellation_token.link_future(\n                asyncio.ensure_future(\n                    self._project_client.agents.files.upload_and_poll(\n                        file_path=file_path, purpose=purpose, polling_interval=polling_interval\n                    )\n                )\n            )\n\n            if file.status != FileState"
+            },
+            {
+              "filename": "dotnet/website/articles/AutoGen.SemanticKernel/AutoGen-SemanticKernel-Overview.md",
+              "content": "## AutoGen.SemanticKernel Overview\n\nAutoGen.SemanticKernel is a package that provides seamless integration with Semantic Kernel. It provides the following agents:\n- @AutoGen.SemanticKernel.SemanticKernelAgent: A slim wrapper agent over `Kernel` that only support original `ChatMessageContent` type via `IMessage<ChatMessageContent>`. To support more AutoGen built-in message type, register the agent with @AutoGen.SemanticKernel.SemanticKernelChatMessageContentConnector.\n- @AutoGen.SemanticKernel.SemanticKernelChatCompletionAgent: A slim wrapper agent over `Microsoft.SemanticKernel.Agents.ChatCompletionAgent`.\n\nAutoGen.SemanticKernel also provides the following middleware:\n- @AutoGen.SemanticKernel.SemanticKernelChatMessageContentConnector: A connector that convert the message from AutoGen built-in message types to `ChatMessageContent` and vice versa. At the current stage, it only supports conversation between @AutoGen.Core.TextMessage, @AutoGen.Core.ImageMessage and @AutoGen.Core.MultiModalMessage. Function call message type like @AutoGen.Core.ToolCallMessage and @AutoGen.Core.ToolCallResultMessage are not supported yet.\n- @AutoGen.SemanticKernel.KernelPluginMiddleware: A middleware that allows you to use semantic kernel plugins in other AutoGen agents like @AutoGen.OpenAI.OpenAIChatAgent.\n\n### Get start with AutoGen.SemanticKernel\n\nTo get start with AutoGen.SemanticKernel, firstly, follow the [installation guide](../Installation.md) to make sure you add the AutoGen feed correctly. Then add `AutoGen.SemanticKernel` package to your project file.\n\n```xml\n<ItemGroup>\n    <PackageReference Include=\"AutoGen.SemanticKernel\" Version=\"AUTOGEN_VERSION\" />\n</ItemGroup>\n```"
+            },
+            {
+              "filename": "python/packages/autogen-core/src/autogen_core/model_context/_token_limited_chat_completion_context.py",
+              "content": "from typing import List\n\nfrom pydantic import BaseModel\nfrom typing_extensions import Self\n\nfrom .._component_config import Component, ComponentModel\nfrom ..models import ChatCompletionClient, FunctionExecutionResultMessage, LLMMessage\nfrom ..tools import ToolSchema\nfrom ._chat_completion_context import ChatCompletionContext\n\n\nclass TokenLimitedChatCompletionContextConfig(BaseModel):\n    model_client: ComponentModel\n    token_limit: int | None = None\n    tool_schema: List[ToolSchema] | None = None\n    initial_messages: List[LLMMessage] | None = None\n\n\nclass TokenLimitedChatCompletionContext(ChatCompletionContext, Component[TokenLimitedChatCompletionContextConfig]):\n    \"\"\"(Experimental) A token based chat completion context maintains a view of the context up to a token limit.\n\n    .. note::\n\n        Added in v0.4.10. This is an experimental component and may change in the future.\n\n    Args:\n        model_client (ChatCompletionClient): The model client to use for token counting.\n            The model client must implement the :meth:`~autogen_core.models.ChatCompletionClient.count_tokens`\n            and :meth:`~autogen_core.models.ChatCompletionClient.remaining_tokens` methods.\n        token_limit (int | None): The maximum number of tokens to keep in the context\n            using the :meth:`~autogen_core.models.ChatCompletionClient.count_tokens` method.\n            If None, the context will be limited by the model client using the\n            :meth:`~autogen_core.models.ChatCompletionClient.remaining_tokens` method.\n        tools (List[ToolSchema] | None): A list of tool schema to use in the context.\n        initial_messages (List[LLMMessage] | None): A list of initial messages to include in the context.\n\n    \"\"\"\n\n    component_config_schema = TokenLimitedChatCompletionContextConfig\n    component_provider_override = \"autogen_core.model_context.TokenLimitedChatCompletionContext\"\n\n    def __init__(\n        self,\n        model_client: ChatCompletionClient,\n        *,\n  "
+            },
+            {
+              "filename": "dotnet/website/release_note/0.1.0.md",
+              "content": "# \ud83c\udf89 Release Notes: AutoGen.Net 0.1.0 \ud83c\udf89\n\n## \ud83d\udce6 New Packages\n\n1. **Add AutoGen.AzureAIInference Package**\n   - **Issue**: [.Net][Feature Request] [#3323](https://github.com/microsoft/autogen/issues/3323)\n   - **Description**: The new `AutoGen.AzureAIInference` package includes the `ChatCompletionClientAgent`.\n\n## \u2728 New Features\n\n1. **Enable Step-by-Step Execution for Two Agent Chat API**\n   - **Issue**: [.Net][Feature Request] [#3339](https://github.com/microsoft/autogen/issues/3339)\n   - **Description**: The `AgentExtension.SendAsync` now returns an `IAsyncEnumerable`, allowing conversations to be driven step by step, similar to how `GroupChatExtension.SendAsync` works.\n\n2. **Support Python Code Execution in AutoGen.DotnetInteractive**\n   - **Issue**: [.Net][Feature Request] [#3316](https://github.com/microsoft/autogen/issues/3316)\n   - **Description**: `dotnet-interactive` now supports Jupyter kernel connection, allowing Python code execution in `AutoGen.DotnetInteractive`.\n\n3. **Support Prompt Cache in Claude**\n   - **Issue**: [.Net][Feature Request] [#3359](https://github.com/microsoft/autogen/issues/3359)\n   - **Description**: Claude now supports prompt caching, which dramatically lowers the bill if the cache is hit. Added the corresponding option in the Claude client.\n\n## \ud83d\udc1b Bug Fixes\n\n1. **GroupChatExtension.SendAsync Doesn\u2019t Terminate Chat When `IOrchestrator` Returns Null as Next Agent**\n   - **Issue**: [.Net][Bug] [#3306](https://github.com/microsoft/autogen/issues/3306)\n   - **Description**: Fixed an issue where `GroupChatExtension.SendAsync` would continue until the max_round is reached even when `IOrchestrator` returns null as the next speaker.\n\n2. **InitializedMessages Are Added Repeatedly in GroupChatExtension.SendAsync Method**\n   - **Issue**: [.Net][Bug] [#3268](https://github.com/microsoft/autogen/issues/3268)\n   - **Description**: Fixed an issue where initialized messages from group chat were being added repeatedly in every iteration of the `GroupChat"
+            },
+            {
+              "filename": "python/packages/autogen-agentchat/tests/test_declarative_components.py",
+              "content": "ient, token_limit=5)\n\n    # Test serialization\n    unbounded_config = unbounded_context.dump_component()\n    assert unbounded_config.provider == \"autogen_core.model_context.UnboundedChatCompletionContext\"\n\n    buffered_config = buffered_context.dump_component()\n    assert buffered_config.provider == \"autogen_core.model_context.BufferedChatCompletionContext\"\n    assert buffered_config.config[\"buffer_size\"] == 5\n\n    head_tail_config = head_tail_context.dump_component()\n    assert head_tail_config.provider == \"autogen_core.model_context.HeadAndTailChatCompletionContext\"\n    assert head_tail_config.config[\"head_size\"] == 3\n    assert head_tail_config.config[\"tail_size\"] == 2\n\n    token_limited_config = token_limited_context.dump_component()\n    assert token_limited_config.provider == \"autogen_core.model_context.TokenLimitedChatCompletionContext\"\n    assert token_limited_config.config[\"token_limit\"] == 5\n    assert (\n        token_limited_config.config[\"model_client\"][\"provider\"]\n        == \"autogen_ext.models.openai.OpenAIChatCompletionClient\"\n    )\n\n    # Test deserialization\n    loaded_unbounded = ComponentLoader.load_component(unbounded_config, UnboundedChatCompletionContext)\n    assert isinstance(loaded_unbounded, UnboundedChatCompletionContext)\n\n    loaded_buffered = ComponentLoader.load_component(buffered_config, BufferedChatCompletionContext)\n\n    assert isinstance(loaded_buffered, BufferedChatCompletionContext)\n\n    loaded_head_tail = ComponentLoader.load_component(head_tail_config, HeadAndTailChatCompletionContext)\n\n    assert isinstance(loaded_head_tail, HeadAndTailChatCompletionContext)\n\n    loaded_token_limited = ComponentLoader.load_component(token_limited_config, TokenLimitedChatCompletionContext)\n    assert isinstance(loaded_token_limited, TokenLimitedChatCompletionContext)\n"
+            }
+          ],
+          "tool_call_id": "call_Nty6YgmGvOpHU1jgbR8bZ8BJ",
+          "metadata": null,
+          "timestamp": "2025-09-28T18:12:28.140393+00:00",
+          "part_kind": "tool-return"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "content": "The `TokenLimitedChatCompletionContext` component in AutoGen serves as a chat completion context that maintains a view of the conversation up to a specified token limit. This means it is designed to manage and restrict the amount of contextual information processed based on the number of tokens, which are essentially chunks of text that can be generated or counted in the context of a conversation with an AI model.\n\n### Key Features:\n- **Token Management**: It uses a model client that must implement methods for counting tokens and determining the remaining tokens.\n- **Configurable Limit**: Developers can set a maximum number of tokens to keep in the context. If no limit is specified, the context will be governed by the capabilities of the model client.\n- **Initial Messages**: The component allows the inclusion of initial messages that can help set the stage for the conversation.\n\n### Purpose:\nThe core purpose of the `TokenLimitedChatCompletionContext` is to provide a controlled environment for chat completions, ensuring that only a certain amount of conversational history is considered. This can be particularly useful for managing performance and ensuring that interactions remain within limits set by the AI model or application needs.\n\nThe component is noted as experimental, meaning its implementation and features might evolve in future updates.\n\nFor more technical details, you can refer to the source code documentation: [TokenLimitedChatCompletionContext](https://github.com/microsoft/autogen/blob/main/python/packages/autogen-core/src/autogen_core/model_context/_token_limited_chat_completion_context.py).",
+          "id": null,
+          "part_kind": "text"
+        }
+      ],
+      "usage": {
+        "input_tokens": 3350,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 301,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:28+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "stop"
+      },
+      "provider_response_id": "chatcmpl-CKqAm4Q9Ms6pKdIg55uamsQTAWuxk",
+      "finish_reason": "stop"
+    }
+  ],
+  "source": "ai-generated"
+}

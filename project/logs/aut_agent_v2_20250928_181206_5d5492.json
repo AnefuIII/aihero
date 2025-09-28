@@ -1,0 +1,121 @@
+{
+  "agent_name": "aut_agent_v2",
+  "system_prompt": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "tools": [
+    "hybrid_search"
+  ],
+  "messages": [
+    {
+      "parts": [
+        {
+          "content": "How do you create an `AssistantAgent` using an OpenAI model?",
+          "timestamp": "2025-09-28T18:12:04.788492+00:00",
+          "part_kind": "user-prompt"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "args": "{\"query\":\"create AssistantAgent OpenAI model\"}",
+          "tool_call_id": "call_gUIkoy4mwDPOPN9TCSR8NC7l",
+          "part_kind": "tool-call"
+        }
+      ],
+      "usage": {
+        "input_tokens": 197,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 20,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:05+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "tool_calls"
+      },
+      "provider_response_id": "chatcmpl-CKqAPrH9pUFl0FCFdJiRScR0U0HWU",
+      "finish_reason": "tool_call"
+    },
+    {
+      "parts": [
+        {
+          "tool_name": "hybrid_search",
+          "content": [
+            {
+              "filename": "dotnet/website/articles/Create-an-agent.md",
+              "content": "## AssistantAgent\n\n[`AssistantAgent`](../api/AutoGen.AssistantAgent.yml) is a built-in agent in `AutoGen` that acts as an AI assistant. It uses LLM to generate response to user input. It also supports function call if the underlying LLM model supports it (e.g. `gpt-3.5-turbo-0613`).\n\n## Create an `AssistantAgent` using OpenAI model.\n\n[!code-csharp[](../../samples/AgentChat/Autogen.Basic.Sample/CodeSnippet/CreateAnAgent.cs?name=code_snippet_1)]\n\n## Create an `AssistantAgent` using Azure OpenAI model.\n\n[!code-csharp[](../../samples/AgentChat/Autogen.Basic.Sample/CodeSnippet/CreateAnAgent.cs?name=code_snippet_2)]"
+            },
+            {
+              "filename": "python/docs/src/user-guide/core-user-guide/components/model-clients.ipynb",
+              "content": ".model_context`\\n\",\n    \"to make the agent \\\"remember\\\" previous conversations.\\n\",\n    \"See the [Model Context](./model-context.ipynb) page for more details.\"\n   ]\n  },\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"## API Keys From Environment Variables\\n\",\n    \"\\n\",\n    \"In the examples above, we show that you can provide the API key through the `api_key` argument. Importantly, the OpenAI and Azure OpenAI clients use the [openai package](https://github.com/openai/openai-python/blob/3f8d8205ae41c389541e125336b0ae0c5e437661/src/openai/__init__.py#L260), which will automatically read an api key from the environment variable if one is not provided.\\n\",\n    \"\\n\",\n    \"- For OpenAI, you can set the `OPENAI_API_KEY` environment variable.  \\n\",\n    \"- For Azure OpenAI, you can set the `AZURE_OPENAI_API_KEY` environment variable. \\n\",\n    \"\\n\",\n    \"In addition, for Gemini (Beta), you can set the `GEMINI_API_KEY` environment variable.\\n\",\n    \"\\n\",\n    \"This is a good practice to explore, as it avoids including sensitive api keys in your code. \\n\",\n    \"\\n\"\n   ]\n  }\n ],\n \"metadata\": {\n  \"kernelspec\": {\n   \"display_name\": \".venv\",\n   \"language\": \"python\",\n   \"name\": \"python3\"\n  },\n  \"language_info\": {\n   \"codemirror_mode\": {\n    \"name\": \"ipython\",\n    \"version\": 3\n   },\n   \"file_extension\": \".py\",\n   \"mimetype\": \"text/x-python\",\n   \"name\": \"python\",\n   \"nbconvert_exporter\": \"python\",\n   \"pygments_lexer\": \"ipython3\",\n   \"version\": \"3.12.7\"\n  }\n },\n \"nbformat\": 4,\n \"nbformat_minor\": 2\n}\n"
+            },
+            {
+              "filename": "python/docs/src/user-guide/core-user-guide/cookbook/openai-assistant-agent.ipynb",
+              "content": "[\n    \"## Using the Agent\\n\",\n    \"\\n\",\n    \"First we need to use the `openai` client to create the actual assistant,\\n\",\n    \"thread, and vector store. Our AutoGen agent will be using these.\"\n   ]\n  },\n  {\n   \"cell_type\": \"code\",\n   \"execution_count\": null,\n   \"metadata\": {},\n   \"outputs\": [],\n   \"source\": [\n    \"import openai\\n\",\n    \"\\n\",\n    \"# Create an assistant with code interpreter and file search tools.\\n\",\n    \"oai_assistant = openai.beta.assistants.create(\\n\",\n    \"    model=\\\"gpt-4o-mini\\\",\\n\",\n    \"    description=\\\"An AI assistant that helps with everyday tasks.\\\",\\n\",\n    \"    instructions=\\\"Help the user with their task.\\\",\\n\",\n    \"    tools=[{\\\"type\\\": \\\"code_interpreter\\\"}, {\\\"type\\\": \\\"file_search\\\"}],\\n\",\n    \")\\n\",\n    \"\\n\",\n    \"# Create a vector store to be used for file search.\\n\",\n    \"vector_store = openai.vector_stores.create()\\n\",\n    \"\\n\",\n    \"# Create a thread which is used as the memory for the assistant.\\n\",\n    \"thread = openai.beta.threads.create(\\n\",\n    \"    tool_resources={\\\"file_search\\\": {\\\"vector_store_ids\\\": [vector_store.id]}},\\n\",\n    \")\"\n   ]\n  },\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Then, we create a runtime, and register an agent factory function for this \\n\",\n    \"agent with the runtime.\"\n   ]\n  },\n  {\n   \"cell_type\": \"code\",\n   \"execution_count\": 5,\n   \"metadata\": {},\n   \"outputs\": [],\n   \"source\": [\n    \"from autogen_core import SingleThreadedAgentRuntime\\n\",\n    \"\\n\",\n    \"runtime = SingleThreadedAgentRuntime()\\n\",\n    \"await OpenAIAssistantAgent.register(\\n\",\n    \"    runtime,\\n\",\n    \"    \\\"assistant\\\",\\n\",\n    \"    lambda: OpenAIAssistantAgent(\\n\",\n    \"        description=\\\"OpenAI Assistant Agent\\\",\\n\",\n    \"        client=openai.AsyncClient(),\\n\",\n    \"        assistant_id=oai_assistant.id,\\n\",\n    \"        thread_id=thread.id,\\n\",\n    \"        assistant_event_handler_factory=lambda: EventHandler(),\\n\",\n    \"    ),\\n\",\n    \")\\n\",\n    \"agent = AgentId(\\\"assistant\\\", \\\"default\\\""
+            },
+            {
+              "filename": "python/packages/autogen-ext/src/autogen_ext/agents/openai/_openai_assistant_agent.py",
+              "content": "())\n\n    Args:\n        name (str): Name of the assistant\n        description (str): Description of the assistant's purpose\n        client (AsyncOpenAI | AsyncAzureOpenAI): OpenAI client or Azure OpenAI client instance\n        model (str): Model to use (e.g. \"gpt-4\")\n        instructions (str): System instructions for the assistant\n        tools (Optional[Iterable[Union[Literal[\"code_interpreter\", \"file_search\"], Tool | Callable[..., Any] | Callable[..., Awaitable[Any]]]]]): Tools the assistant can use\n        assistant_id (Optional[str]): ID of existing assistant to use\n        thread_id (Optional[str]): ID of existing thread to use\n        metadata (Optional[Dict[str, str]]): Additional metadata for the assistant.\n        response_format (Optional[AssistantResponseFormatOptionParam]): Response format settings\n        temperature (Optional[float]): Temperature for response generation\n        tool_resources (Optional[ToolResources]): Additional tool configuration\n        top_p (Optional[float]): Top p sampling parameter\n    \"\"\"\n\n    def __init__(\n        self,\n        name: str,\n        description: str,\n        client: AsyncOpenAI | AsyncAzureOpenAI,\n        model: str,\n        instructions: str,\n        tools: Optional[\n            Iterable[\n                Union[\n                    Literal[\"code_interpreter\", \"file_search\"],\n                    Tool | Callable[..., Any] | Callable[..., Awaitable[Any]],\n                ]\n            ]\n        ] = None,\n        assistant_id: Optional[str] = None,\n        thread_id: Optional[str] = None,\n        metadata: Optional[Dict[str, str]] = None,\n        response_format: Optional[\"AssistantResponseFormatOptionParam\"] = None,\n        temperature: Optional[float] = None,\n        tool_resources: Optional[\"ToolResources\"] = None,\n        top_p: Optional[float] = None,\n    ) -> None:\n        if isinstance(client, ChatCompletionClient):\n            raise ValueError(\n                \"Incorrect client passed to OpenAIAssistantAgent."
+            }
+          ],
+          "tool_call_id": "call_gUIkoy4mwDPOPN9TCSR8NC7l",
+          "metadata": null,
+          "timestamp": "2025-09-28T18:12:05.903493+00:00",
+          "part_kind": "tool-return"
+        }
+      ],
+      "instructions": "You are a helpful assistant for a course.  \n\nUse the search tool to find relevant information from the course materials before answering questions.  \n\nIf you can find specific information through search, use it to provide accurate answers.\n\nAlways include references by citing the filename of the source material you used.  \nWhen citing the reference, replace \"faq-main\" by the full path to the GitHub repository: \"https://github.com/DataTalksClub/faq/blob/main/\"\nFormat: [LINK TITLE](FULL_GITHUB_LINK)\n\nIf the search doesn't return relevant results, let the user know and provide general guidance.",
+      "kind": "request"
+    },
+    {
+      "parts": [
+        {
+          "content": "To create an `AssistantAgent` using an OpenAI model, follow these steps:\n\n1. **Set up your OpenAI client**: Ensure you have the OpenAI library installed and configured to access the model you want to use. You can set the API key in your environment variables or pass it directly in your code.\n   \n2. **Create an Assistant with the desired model**: You can specify the model you want to use (e.g., `gpt-3.5-turbo` or `gpt-4o-mini`), along with a description and instructions for how the assistant should behave.\n\nHere is a sample code snippet that demonstrates how to create an `AssistantAgent`:\n\n```python\nimport openai\n\n# Create an assistant with code interpreter and file search tools\noai_assistant = openai.beta.assistants.create(\n    model=\"gpt-4o-mini\", # Specify the model here\n    description=\"An AI assistant that helps with everyday tasks.\",\n    instructions=\"Help the user with their task.\",\n    tools=[{\"type\": \"code_interpreter\"}, {\"type\": \"file_search\"}],\n)\n\n# Create a vector store to be used for the file search\nvector_store = openai.vector_stores.create()\n\n# Create a thread which serves as memory for the assistant\nthread = openai.beta.threads.create(\n    tool_resources={\"file_search\": {\"vector_store_ids\": [vector_store.id]}},\n)\n\n# Afterwards, register this assistant with a runtime\nfrom autogen_core import SingleThreadedAgentRuntime\n\nruntime = SingleThreadedAgentRuntime()\nawait OpenAIAssistantAgent.register(\n    runtime,\n    \"assistant\", \n    lambda: OpenAIAssistantAgent(\n        description=\"OpenAI Assistant Agent\",\n        client=openai.AsyncClient(),\n        assistant_id=oai_assistant.id,\n        thread_id=thread.id,\n        assistant_event_handler_factory=lambda: EventHandler(),\n    ),\n)\n```\n\nIn the example above:\n- We create an assistant with specific tools and a model.\n- We utilize a vector store for file searching capabilities.\n- We then create a runtime context and register the assistant.\n\nYou can refer to more details and examples in the course materials, specifically in the [Create an agent](https://github.com/DataTalksClub/faq/blob/main/dotnet/website/articles/Create-an-agent.md) document.",
+          "id": null,
+          "part_kind": "text"
+        }
+      ],
+      "usage": {
+        "input_tokens": 2161,
+        "cache_write_tokens": 0,
+        "cache_read_tokens": 0,
+        "output_tokens": 483,
+        "input_audio_tokens": 0,
+        "cache_audio_read_tokens": 0,
+        "output_audio_tokens": 0,
+        "details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "model_name": "gpt-4o-mini-2024-07-18",
+      "timestamp": "2025-09-28T18:12:06+00:00",
+      "kind": "response",
+      "provider_name": "openai",
+      "provider_details": {
+        "finish_reason": "stop"
+      },
+      "provider_response_id": "chatcmpl-CKqAQV5qlMZq8i5tapmpBWwK0IkZP",
+      "finish_reason": "stop"
+    }
+  ],
+  "source": "ai-generated"
+}
