@@ -36,7 +36,7 @@ def setup_indexes() -> Tuple[Any, Any, Any]:
 
 
 @st.cache_resource(show_spinner="2. Initializing AI Agent...")
-def setup_agent(aut_index, autogen_vindex, embedding_model):
+def setup_agent(_aut_index, autogen_vindex, embedding_model):
     """Initializes the Agent and attaches the Hybrid Search Tool."""
     
     # NOTE: The Agent automatically reads the OPENAI_API_KEY from the 
