@@ -36,16 +36,18 @@ def setup_indexes() -> Tuple[Any, Any, Any]:
 
 
 @st.cache_resource(show_spinner="2. Initializing AI Agent...")
-def setup_agent(_aut_index, autogen_vindex, embedding_model):
+# FIX: All three arguments are unhashable resources and must be prefixed with an underscore
+def setup_agent(_aut_index, _autogen_vindex, _embedding_model):
     """Initializes the Agent and attaches the Hybrid Search Tool."""
     
     # NOTE: The Agent automatically reads the OPENAI_API_KEY from the 
     # environment, which Streamlit Cloud populates from st.secrets.
     
+    # FIX: Use the parameters with the underscore, as they are the local variables now
     agent = search_agent.init_agent(
-        aut_index, 
-        autogen_vindex, 
-        embedding_model, 
+        _aut_index, 
+        _autogen_vindex, 
+        _embedding_model, 
         REPO_OWNER, 
         REPO_NAME
     )
@@ -62,6 +64,9 @@ def main_app():
 
     # 1. Setup the Indexes and Agent
     try:
+        # NOTE: The arguments passed here (aut_index, autogen_vindex, embedding_model)
+        # do NOT need the underscore, as they are local variables from the
+        # setup_indexes return and are passed by position.
         aut_index, autogen_vindex, embedding_model = setup_indexes() 
         agent = setup_agent(aut_index, autogen_vindex, embedding_model)
     except Exception as e:
