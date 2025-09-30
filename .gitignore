@@ -5,3 +5,4 @@
 /project/logs/
 /project/.env
 /project/data/autogen_data_processed.json
+/project/doc_files/autogen_agent.mp4
