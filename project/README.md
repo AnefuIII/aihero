@@ -43,6 +43,7 @@ To set up and run this project locally, you will need:
 * Python 3.9+
 * Git
 * An **OpenAI API Key** (required for the underlying LLM calls, set as an environment variable or in a `.env` file).
+* The `uv` package manager installed (`pip install uv`).
 
 ### Step-by-Step Setup
 
@@ -80,18 +81,32 @@ To set up and run this project locally, you will need:
     ```
 
 4.  **Set your API Key:**
-    The agent expects the key to be set as an environment variable.
+    The agent expects the key to be set as an environment variable. Create a file named **`.env`** in the root `/project` directory and add your key:
+
+    ```bash
+    .env
+    OPENAI_API_KEY="sk-XXXXXXXXXXXXXXXXXXXXXXXXX"
+    ```
+
+    or in terminal the key lasts till end of terminal session
+
     ```bash
     export OPENAI_API_KEY="YOUR_API_KEY"
     ```
 
 ---
 
-## 4. Usage
+## 4. Usage (Data Ingestion and Running)
 
-### Running the Data Ingestion (Indexing)
+### 4.1 Running the Data Ingestion (Indexing)
 
-The first step is to run the data ingestion to pull the documents, chunk them, and create the hybrid indexes. This only needs to be run once.
+This step downloads the documentation files from the data source, processes the text, creates LLM-enriched chunks, and generates the local search indexes (Keyword and Vector) necessary for the RAG agent to function. **This must be executed once before running the application.**
+
+* **Data Source:** The contents of the official **microsoft/autogen** repository:
+    `https://github.com/microsoft/autogen/tree/main`
+
+* **Output:** The script will create a dedicated index/knowledge base in the local **`/data`** folder (e.g., `autogen-index.pkl`, `autogen-vindex.pkl`).
+
 
 ```bash
 # This command runs the indexing logic found in ingest.py
