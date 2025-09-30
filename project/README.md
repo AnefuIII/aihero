@@ -4,6 +4,14 @@
 
 ---
 
+## 🚀 Project Demo
+
+Watch the AI Agent in action, answering complex questions about AutoGen documentation:
+
+[**View the Full Video Demo Here**](https://drive.google.com/file/d/1JsZm1Wa_4kfVG_bFs-_I3Usu28kFHoK2/view?usp=sharing)
+
+---
+
 ## 2. Overview
 
 ### The Problem
@@ -41,18 +49,34 @@ To set up and run this project locally, you will need:
 1.  **Clone the repository:**
     ```bash
     git clone [https://github.com/AnefuIII/aihero/](https://github.com/AnefuIII/aihero/)
-    cd aihero
+    cd aihero/project/
     ```
 
-2.  **Create and activate a virtual environment:**
+2.  **Initialize project and install dependencies in one go:**
+    
+    If you have a `requirements.txt` file, `uv` can read it and install everything after creating the environment. The virtual environment will be created at `.venv` by default.
+
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use: .\venv\Scripts\activate
+    uv venv
+    uv pip install -r requirements.txt
     ```
 
-3.  **Install dependencies:**
+    **Alternative (Preferred for new projects, using `pyproject.toml`):**
+
+    If you are moving towards a modern workflow using `pyproject.toml` (or `uv init` was used), you can use the sync command instead, which automatically creates the `.venv` and installs/updates packages:
+
     ```bash
-    pip install -r requirements.txt
+    uv sync
+    ```
+
+3.  **Activate a virtual environment (if manual activation is needed):**
+
+    This step is only necessary if you need to run system commands like `python` or an installed tool without using the `uv run` prefix.
+
+    ```bash
+    source .venv/bin/activate  # On Windows (Cmd/Git Bash), use: .venv\Scripts\activate.bat
+    # On Windows (PowerShell), use: .venv\Scripts\Activate.ps1
+    ```
     ```
 
 4.  **Set your API Key:**
@@ -71,11 +95,18 @@ The first step is to run the data ingestion to pull the documents, chunk them, a
 
 ```bash
 # This command runs the indexing logic found in ingest.py
-python ingest.py
+uv run python ingest.py
+```
+#### Running the CLI/Terminal Test (main.py)
+This is the command-line interface for testing the agent locally without the Streamlit UI.
+
+```Bash
+# This command runs the main conversational agent loop
+uv run python main.py
 ```
 
 ### Running the Streamlit Web Application
-Start the interactive chat interface locally:
+Start the interactive chat interface locally.Since streamlit was installed as a dependency, uv run will find it and execute the command.
 
 ```Bash
 
@@ -156,7 +187,3 @@ This project was built as part of the AI Hero course, guided by Alexey Grigorev.
 
 Inspiration: The architecture is based on the principles of advanced RAG systems.
 
-## 11. License
-This project is licensed under the [LICENSE TYPE HERE] License.
-
-(Note: Replace [LICENSE TYPE HERE] with your chosen license, e.g., MIT, Apache 2.0.)
