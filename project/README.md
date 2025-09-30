@@ -20,7 +20,9 @@ This project implements a sophisticated AI Agent powered by **Hybrid Search (Spa
 * **Grounded Answers:** Answers are strictly based on the content of the repository files, minimizing hallucinations.
 * **Live Web App:** Deployed via Streamlit for immediate, cross-platform access.
 
-*(Note: Insert a screenshot or GIF of your live app here.)*
+<p align="center">
+  <img src="doc_files/Screenshot%20(195).png" alt="Screenshot of the Streamlit App" width="600"/>
+</p>
 
 ---
 
