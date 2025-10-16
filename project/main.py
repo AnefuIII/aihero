@@ -12,7 +12,7 @@ openai_client = OpenAI()
 
 # ----------------------------------------------------
 # Define the path to your PDF file
-PDF_FILE_PATH = "Constitution-of-the-Federal-Republic-of-Nigeria.pdf" # <-- CHANGE THIS to your PDF file
+PDF_FILE_PATH = "cai.pdf" # <-- CHANGE THIS to your PDF file
 # We'll use a placeholder for REPO_OWNER/REPO_NAME for the link generation, 
 # or you can remove them if the agent is no longer expected to generate GitHub links.
 REPO_OWNER = "local_project"

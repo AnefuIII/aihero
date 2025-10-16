@@ -10,9 +10,9 @@ import os
 from typing import Tuple, Any
 
 # --- GLOBAL CONFIGURATION ---
-PDF_FILE_PATH = "Constitution-of-the-Federal-Republic-of-Nigeria.pdf" 
-REPO_OWNER = "FederalRepublic" # Used for citation link building
-REPO_NAME = "NigeriaConstitution" # Used for citation link building
+PDF_FILE_PATH = "cai.pdf" 
+REPO_OWNER = "FR" # Used for citation link building
+REPO_NAME = "NC" # Used for citation link building
 # ---------------------------------------------------------------------
 
 # 1. Setup Indexes (This MUST run only once)
