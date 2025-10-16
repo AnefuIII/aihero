@@ -54,17 +54,10 @@ class HybridSearchTool:
 # --- 2. AGENT DEFINITION ---
 
 SYSTEM_PROMPT_TEMPLATE = """
-You are a helpful assistant that answers questions about the AutoGen documentation.  
-
-Use the **hybrid_search** tool to find relevant information from the course materials before answering questions.  
-
-If you can find specific information through search, use it to provide accurate answers.
-
+...
 Always include references by citing the filename of the source material you used.
-Format the reference as a full path to the GitHub repository:
-"https://github.com/{repo_owner}/{repo_name}/blob/main/FILENAME_GOES_HERE"
-Example Format: [LINK TITLE](FULL_GITHUB_LINK)
-
+Format the reference as a simple citation: [Constitution-of-the-Federal-Republic-of-Nigeria.pdf]
+Example Format: [Constitution-of-the-Federal-Republic-of-Nigeria.pdf]
 
 If the search doesn't return relevant results, let the user know and provide general guidance.
 """

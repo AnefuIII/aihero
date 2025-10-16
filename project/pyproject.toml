@@ -8,6 +8,7 @@ dependencies = [
     "minsearch>=0.0.5",
     "openai>=1.109.1",
     "pydantic-ai>=1.0.10",
+    "pypdf>=6.1.1",
     "python-dotenv>=1.1.1",
     "python-frontmatter>=1.1.0",
     "requests>=2.32.5",
