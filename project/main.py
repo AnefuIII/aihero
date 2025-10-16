@@ -3,59 +3,62 @@ import search_agent
 import logs
 
 import asyncio
-import os # Import os to set the API key if needed
-
-# ----------------------------------------------------
+import os 
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# This line loads the variables from your .env file
 load_dotenv()
 openai_client = OpenAI()
-# ----------------------------------------------------
 
-REPO_OWNER = "microsoft"
-REPO_NAME = "autogen"
+# ----------------------------------------------------
+# Define the path to your PDF file
+PDF_FILE_PATH = "Constitution-of-the-Federal-Republic-of-Nigeria.pdf" # <-- CHANGE THIS to your PDF file
+# We'll use a placeholder for REPO_OWNER/REPO_NAME for the link generation, 
+# or you can remove them if the agent is no longer expected to generate GitHub links.
+REPO_OWNER = "local_project"
+REPO_NAME = "pdf_docs"
+# # ----------------------------------------------------
 
 
 def initialize_index():
-    print(f"Starting Autogen AI Assistant for {REPO_OWNER}/{REPO_NAME}")
+    # Use the PDF path here instead of the repo info
+    print(f"Starting AI Assistant for {PDF_FILE_PATH}")
     print("Initializing data ingestion for Hybrid Search...")
 
-    # NOTE ON FILTER: A typical full RAG project searches all docs.
-    # If you still need a filter, define it here:
+    # NOTE ON FILTER: Filter still works, but now checks the content of the PDF.
     def filter(doc):
-        # Example: Skip files in the 'examples/' folder
-        return not doc['filename'].startswith('examples/')
+        # Example: Skip files if the content contains a specific phrase.
+        # For a single PDF, this might not be necessary, so you can return True.
+        return True # For now, don't skip any chunks from the PDF
     
-    # ASSUMPTION: ingest.py now has a function 'index_all_data' 
-    # that returns the three required components for Hybrid Search.
+    # PASS THE PDF PATH INSTEAD OF REPO OWNER/NAME
     aut_index, autogen_vindex, embedding_model = ingest.index_all_data(
-        REPO_OWNER, 
-        REPO_NAME, 
+        PDF_FILE_PATH, # <-- MODIFIED: Pass the PDF path as the data source
         filter=filter
     )
     
     print("Data indexing completed successfully!")
     
-    # Return all three components required for the HybridSearchTool
     return aut_index, autogen_vindex, embedding_model
 
 
 def initialize_agent(aut_index, autogen_vindex, embedding_model):
     print("Initializing search agent...")
     
-    # Pass all three components to the updated init_agent function
+    # REPO_OWNER/REPO_NAME are still needed here for the agent's prompt
+    # and link generation in search_agent.py, so keep them.
     agent = search_agent.init_agent(
         aut_index, 
         autogen_vindex, 
-        embedding_model, 
+        embedding_model,
         REPO_OWNER, 
         REPO_NAME
     )
     
     print("Agent initialized successfully!")
     return agent
+
+# The rest of main.py remains the same.
 
 
 def main():
@@ -88,56 +91,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# import ingest
-# import search_agent 
-# import logs
-
-# import asyncio
-
-
-# REPO_OWNER = "microsoft"
-# REPO_NAME = "autogen"
-
-
-# def initialize_index():
-#     print(f"Starting Autogen AI Assistant for {REPO_OWNER}/{REPO_NAME}")
-#     print("Initializing data ingestion...")
-
-#     def filter(doc):
-#         return 'data-engineering' in doc['filename']
-
-#     index = ingest.index_data(REPO_OWNER, REPO_NAME, filter=filter)
-#     print("Data indexing completed successfully!")
-#     return index
-
-
-# def initialize_agent(index):
-#     print("Initializing search agent...")
-#     agent = search_agent.init_agent(index, REPO_OWNER, REPO_NAME)
-#     print("Agent initialized successfully!")
-#     return agent
-
-
-# def main():
-#     index = initialize_index()
-#     agent = initialize_agent(index)
-#     print("\nReady to answer your questions!")
-#     print("Type 'stop' to exit the program.\n")
-
-#     while True:
-#         question = input("Your question: ")
-#         if question.strip().lower() == 'stop':
-#             print("Goodbye!")
-#             break
-
-#         print("Processing your question...")
-#         response = asyncio.run(agent.run(user_prompt=question))
-#         logs.log_interaction_to_file(agent, response.new_messages())
-
-#         print("\nResponse:\n", response.output)
-#         print("\n" + "="*50 + "\n")
-
-
-# if __name__ == "__main__":
-#     main()

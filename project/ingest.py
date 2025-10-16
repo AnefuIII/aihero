@@ -1,43 +1,28 @@
-import io
-import zipfile
-import requests
-import frontmatter
 import numpy as np
+import io
+from pypdf import PdfReader # <-- NEW: Import PdfReader
 
-from minsearch import Index, VectorSearch # <-- New Import
-from sentence_transformers import SentenceTransformer # <-- New Import
-from tqdm.auto import tqdm # Import tqdm for progress bar (optional, but helpful)
+from minsearch import Index, VectorSearch
+from sentence_transformers import SentenceTransformer
+from tqdm.auto import tqdm 
 
+# --- NEW: Function to read a local PDF file ---
+def read_pdf_data(pdf_path):
+    """Reads all text from a local PDF file and returns it as a single 'document'."""
+    print(f"Reading PDF from: {pdf_path}")
+    reader = PdfReader(pdf_path)
+    all_text = ""
+    for page in reader.pages:
+        all_text += page.extract_text() + "\n\n"
+    
+    # Return data as a list containing a single 'document'
+    # The 'filename' is the path for easy reference.
+    return [{
+        'filename': pdf_path,
+        'content': all_text
+    }]
 
-# --- Existing Functions (Read, Sliding Window, Chunk) ---
-
-def read_repo_data(repo_owner, repo_name):
-    url = f'https://codeload.github.com/{repo_owner}/{repo_name}/zip/refs/heads/main'
-    resp = requests.get(url)
-
-    repository_data = []
-
-    zf = zipfile.ZipFile(io.BytesIO(resp.content))
-
-    for file_info in zf.infolist():
-        filename = file_info.filename.lower()
-
-        if not (filename.endswith('.md') or filename.endswith('.mdx')):
-            continue
-
-        with zf.open(file_info) as f_in:
-            content = f_in.read()
-            post = frontmatter.loads(content)
-            data = post.to_dict()
-
-            _, filename_repo = file_info.filename.split('/', maxsplit=1)
-            data['filename'] = filename_repo
-            repository_data.append(data)
-
-    zf.close()
-
-    return repository_data
-
+# --- Existing Functions (Sliding Window, Chunk) ---
 
 def sliding_window(seq, size, step):
     if size <= 0 or step <= 0:
@@ -48,7 +33,7 @@ def sliding_window(seq, size, step):
     for i in range(0, n, step):
         batch = seq[i:i+size]
         result.append({'start': i, 'content': batch})
-        if i + size >= n: # Changed > to >= for cleaner end condition
+        if i + size >= n:
             break
 
     return result
@@ -67,20 +52,22 @@ def chunk_documents(docs, size=2000, step=1000):
 
     return chunks
 
-# --- NEW HYBRID INDEXING FUNCTION ---
+# --- MODIFIED HYBRID INDEXING FUNCTION ---
 
-# This function is the new entry point for main.py
+# The repo_owner/repo_name arguments are no longer needed.
+# It now accepts a 'data_source' argument, which should be the PDF path.
 def index_all_data(
-    repo_owner,
-    repo_name,
+    data_source, # <-- CHANGED: Accepts the local PDF file path
     filter=None,
     chunking_params=None,
     embedding_model_name='multi-qa-distilbert-cos-v1'
 ):
-    # 1. Read Data
-    docs = read_repo_data(repo_owner, repo_name)
+    # 1. Read Data - Using the new PDF function
+    docs = read_pdf_data(data_source) # <-- MODIFIED
 
     # 2. Filter Data (if a filter function is provided)
+    # The filter function here might be less relevant for a single PDF, 
+    # but the logic remains for future use.
     if filter is not None:
         docs = [doc for doc in docs if filter(doc)]
 
@@ -118,97 +105,3 @@ def index_all_data(
 
     # 8. Return all three required components for Hybrid Search
     return aut_index, autogen_vindex, embedding_model
-
-
-
-# --- OLD INDEXING FUNCTION (FOR REFERENCE) ---
-
-# import io
-# import zipfile
-# import requests
-# import frontmatter
-
-# from minsearch import Index
-
-
-# def read_repo_data(repo_owner, repo_name):
-#     url = f'https://codeload.github.com/{repo_owner}/{repo_name}/zip/refs/heads/main'
-#     #url = f'https://github.com/{repo_owner}/{repo_name}/archive/refs/heads/main.zip'
-#     resp = requests.get(url)
-
-#     repository_data = []
-
-#     zf = zipfile.ZipFile(io.BytesIO(resp.content))
-
-#     for file_info in zf.infolist():
-#         filename = file_info.filename.lower()
-
-#         if not (filename.endswith('.md') or filename.endswith('.mdx')):
-#             continue
-
-#         with zf.open(file_info) as f_in:
-#             content = f_in.read()
-#             post = frontmatter.loads(content)
-#             data = post.to_dict()
-
-#             _, filename_repo = file_info.filename.split('/', maxsplit=1)
-#             data['filename'] = filename_repo
-#             repository_data.append(data)
-
-#     zf.close()
-
-#     return repository_data
-
-
-# def sliding_window(seq, size, step):
-#     if size <= 0 or step <= 0:
-#         raise ValueError("size and step must be positive")
-
-#     n = len(seq)
-#     result = []
-#     for i in range(0, n, step):
-#         batch = seq[i:i+size]
-#         result.append({'start': i, 'content': batch})
-#         if i + size > n:
-#             break
-
-#     return result
-
-
-# def chunk_documents(docs, size=2000, step=1000):
-#     chunks = []
-
-#     for doc in docs:
-#         doc_copy = doc.copy()
-#         doc_content = doc_copy.pop('content')
-#         doc_chunks = sliding_window(doc_content, size=size, step=step)
-#         for chunk in doc_chunks:
-#             chunk.update(doc_copy)
-#         chunks.extend(doc_chunks)
-
-#     return chunks
-
-
-# def index_data(
-#         repo_owner,
-#         repo_name,
-#         filter=None,
-#         chunk=False,
-#         chunking_params=None,
-#     ):
-#     docs = read_repo_data(repo_owner, repo_name)
-
-#     if filter is not None:
-#         docs = [doc for doc in docs if filter(doc)]
-
-#     if chunk:
-#         if chunking_params is None:
-#             chunking_params = {'size': 2000, 'step': 1000}
-#         docs = chunk_documents(docs, **chunking_params)
-
-#     index = Index(
-#         text_fields=["content", "filename"],
-#     )
-
-#     index.fit(docs)
-#     return index

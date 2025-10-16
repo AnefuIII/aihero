@@ -1,4 +1,4 @@
-# app.py
+# app.py (Corrected)
 
 import streamlit as st
 import ingest
@@ -10,44 +10,53 @@ import os
 from typing import Tuple, Any
 
 # --- GLOBAL CONFIGURATION ---
-REPO_OWNER = "microsoft"
-REPO_NAME = "autogen"
+PDF_FILE_PATH = "Constitution-of-the-Federal-Republic-of-Nigeria.pdf" 
+REPO_OWNER = "FederalRepublic" # Used for citation link building
+REPO_NAME = "NigeriaConstitution" # Used for citation link building
+# ---------------------------------------------------------------------
 
-# ---------------------------------------------------------------------
-# Use Streamlit's cache to initialize expensive components ONLY ONCE
-# This function handles the entire data ingestion and indexing process.
-# ---------------------------------------------------------------------
-@st.cache_resource(show_spinner="1. Initializing data ingestion (Reading repo, chunking, embedding, indexing)...")
+# 1. Setup Indexes (This MUST run only once)
+# @st.cache_resource guarantees this function runs only on the first load.
+@st.cache_resource(show_spinner="1. Initializing data ingestion (Reading PDF, chunking, embedding, indexing)...")
 def setup_indexes() -> Tuple[Any, Any, Any]:
     """Runs the indexing process and returns the necessary components."""
     
-    # 1. Define the filter function (excluding examples)
     def filter(doc):
-        return not doc['filename'].startswith('examples/')
+        # Always return True for a single PDF to index all content
+        return True 
         
-    # 2. Call the hybrid indexing function from ingest.py
+    # Call the hybrid indexing function from ingest.py with the PDF path
     aut_index, autogen_vindex, embedding_model = ingest.index_all_data(
-        REPO_OWNER, 
-        REPO_NAME, 
+        PDF_FILE_PATH,  
         filter=filter
     )
     
+    # NOTE: These unhashable objects are cached by Streamlit now.
     return aut_index, autogen_vindex, embedding_model
 
 
+# 2. Setup Agent (This MUST also run only once)
+# This function is dependent on the first one. By calling setup_indexes()
+# inside of it, we retrieve the cached results without forcing a rerun 
+# of the indexing.
+
 @st.cache_resource(show_spinner="2. Initializing AI Agent...")
-# FIX: All three arguments are unhashable resources and must be prefixed with an underscore
-def setup_agent(_aut_index, _autogen_vindex, _embedding_model):
-    """Initializes the Agent and attaches the Hybrid Search Tool."""
+def setup_agent():
+    """Initializes the Agent and attaches the Hybrid Search Tool.
+    
+    It retrieves the cached index components from setup_indexes().
+    """
+    
+    # Retrieve the CACHED components from the first function call
+    aut_index, autogen_vindex, embedding_model = setup_indexes()
     
     # NOTE: The Agent automatically reads the OPENAI_API_KEY from the 
-    # environment, which Streamlit Cloud populates from st.secrets.
+    # environment/st.secrets.
     
-    # FIX: Use the parameters with the underscore, as they are the local variables now
     agent = search_agent.init_agent(
-        _aut_index, 
-        _autogen_vindex, 
-        _embedding_model, 
+        aut_index, 
+        autogen_vindex, 
+        embedding_model, 
         REPO_OWNER, 
         REPO_NAME
     )
@@ -58,17 +67,15 @@ def setup_agent(_aut_index, _autogen_vindex, _embedding_model):
 # ---------------------------------------------------------------------
 def main_app():
     
-    st.set_page_config(page_title="AutoGen Docs Assistant", layout="wide")
-    st.title("🤖 AutoGen Documentation AI Assistant")
-    st.markdown("Ask any question about the **AutoGen** repository documentation. The agent uses **Hybrid Search** and **`gpt-4o-mini`** for grounded answers.")
+    st.set_page_config(page_title="Constitution-AI", layout="wide")
+    st.title("⚖️ Constitution-AI: Nigerian Constitutional Assistant")
+    st.markdown("Ask any question about the **Federal Republic of Nigeria Constitution**. The AI uses **Hybrid Search** and **`gpt-4o-mini`** for grounded answers with article citations.")
 
     # 1. Setup the Indexes and Agent
     try:
-        # NOTE: The arguments passed here (aut_index, autogen_vindex, embedding_model)
-        # do NOT need the underscore, as they are local variables from the
-        # setup_indexes return and are passed by position.
-        aut_index, autogen_vindex, embedding_model = setup_indexes() 
-        agent = setup_agent(aut_index, autogen_vindex, embedding_model)
+        # We only need to call the setup_agent function, which internally
+        # calls and retrieves the CACHED results from setup_indexes.
+        agent = setup_agent()
     except Exception as e:
         st.error(f"Failed to initialize the Agent or Indexes. Please check your setup and Streamlit secrets.")
         st.exception(e)
@@ -80,7 +87,7 @@ def main_app():
         st.session_state.messages = []
         st.session_state.messages.append({
             "role": "assistant", 
-            "content": "Hi! I'm ready to answer your questions about the Microsoft AutoGen documentation. What can I help you find?"
+            "content": "Hi! I'm ready to answer your questions about the Nigerian Constitution. What can I help you find?"
         })
 
 
@@ -102,16 +109,15 @@ def main_app():
         with st.chat_message("assistant"):
             with st.spinner("Running Hybrid Search & Agent..."):
                 
-                # Run the agent using asyncio.run
                 try:
-                    # Note: We use asyncio.run because the Agent's run method is often async.
+                    # Run the agent using asyncio.run
                     response = asyncio.run(agent.run(user_prompt=prompt))
                     
                     # Get the final text output
                     agent_output = response.output
                     
                     # Log the interaction (using your existing logs module)
-                    logs.log_interaction_to_file(agent, response.new_messages())
+                    # logs.log_interaction_to_file(agent, response.new_messages())
                     
                     # Display the result
                     st.markdown(agent_output)
