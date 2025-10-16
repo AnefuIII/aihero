@@ -6,3 +6,6 @@ minsearch
 sentence-transformers
 numpy
 tqdm
+pydantic-ai
+# If pydantic-ai gives an error, use the name from your uv export:
+# pydantic-ai-slim
