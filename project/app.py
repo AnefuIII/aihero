@@ -9,11 +9,19 @@ import asyncio
 import os 
 from typing import Tuple, Any
 
-# --- GLOBAL CONFIGURATION ---
-PDF_FILE_PATH = "cai.pdf" 
-REPO_OWNER = "FR" # Used for citation link building
-REPO_NAME = "NC" # Used for citation link building
-# ---------------------------------------------------------------------
+# # --- GLOBAL CONFIGURATION ---
+# PDF_FILE_PATH = "cai.pdf" 
+# REPO_OWNER = "FR" # Used for citation link building
+# REPO_NAME = "NC" # Used for citation link building
+# # ---------------------------------------------------------------------
+
+# --- GLOBAL CONFIGURATION (MODIFIED) ---
+WEBSITE_URL = "https://www.fmbn.gov.ng" # <-- NEW
+PDF_URL = "https://www.fmbn.gov.ng/documents/NHF_ACT._CAP_N45.pdf" # <-- NEW
+# NOTE: The citation links will now point to the URLs, not file paths.
+REPO_OWNER = "FMBN" 
+REPO_NAME = "Website" 
+# -----------------------------------
 
 # 1. Setup Indexes (This MUST run only once)
 # @st.cache_resource guarantees this function runs only on the first load.
@@ -26,11 +34,15 @@ def setup_indexes() -> Tuple[Any, Any, Any]:
         return True 
         
     # Call the hybrid indexing function from ingest.py with the PDF path
-    aut_index, autogen_vindex, embedding_model = ingest.index_all_data(
-        PDF_FILE_PATH,  
+    aut_index, autogen_vindex, embedding_model = ingest.index_website_data(
+        WEBSITE_URL,  
+        PDF_URL,
         filter=filter
     )
     
+    # NOTE: These unhashable objects are cached by Streamlit now.
+    return aut_index, autogen_vindex, embedding_model
+
     # NOTE: These unhashable objects are cached by Streamlit now.
     return aut_index, autogen_vindex, embedding_model
 
@@ -39,26 +51,51 @@ def setup_indexes() -> Tuple[Any, Any, Any]:
 # This function is dependent on the first one. By calling setup_indexes()
 # inside of it, we retrieve the cached results without forcing a rerun 
 # of the indexing.
+# 2. Setup Agent (This MUST also run only once)
+# ...
+
+# project/app.py (Modified setup_agent function)
+
+# ... (inside setup_agent function)
 
 @st.cache_resource(show_spinner="2. Initializing AI Agent...")
 def setup_agent():
-    """Initializes the Agent and attaches the Hybrid Search Tool.
     
-    It retrieves the cached index components from setup_indexes().
-    """
-    
-    # Retrieve the CACHED components from the first function call
     aut_index, autogen_vindex, embedding_model = setup_indexes()
     
-    # NOTE: The Agent automatically reads the OPENAI_API_KEY from the 
-    # environment/st.secrets.
+    openai_api_key = None
     
+    # 1. Prioritize reading from the environment variable (for local 'export')
+    if "OPENAI_API_KEY" in os.environ:
+        openai_api_key = os.environ["OPENAI_API_KEY"]
+    
+    # 2. If key is NOT found in os.environ, safely attempt to read from st.secrets
+    if not openai_api_key:
+        try:
+            # This line will only run if openai_api_key is still None
+            # We use a try/except to gracefully handle the StreamlitSecretNotFoundError 
+            # that occurs when the app is run locally without a secrets.toml file.
+            openai_api_key = st.secrets["OPENAI_API_KEY"]
+        except Exception:
+            # If any exception occurs (like the StreamlitSecretNotFoundError), 
+            # we ignore it and leave openai_api_key as None.
+            pass
+
+    # 3. If still not found, raise a clear error
+    if not openai_api_key:
+         raise RuntimeError(
+             "OPENAI_API_KEY not found. Set it via 'export' locally "
+             "or in Streamlit secrets for deployment."
+         )
+    
+    # Pass the key to the agent creation logic
     agent = search_agent.init_agent(
         aut_index, 
         autogen_vindex, 
         embedding_model, 
         REPO_OWNER, 
-        REPO_NAME
+        REPO_NAME,
+        openai_api_key=openai_api_key 
     )
     return agent
 
@@ -67,10 +104,16 @@ def setup_agent():
 # ---------------------------------------------------------------------
 def main_app():
     
-    st.set_page_config(page_title="Constitution-AI", layout="wide")
-    st.title("⚖️ Constitution-AI: Nigerian Constitutional Assistant")
-    st.markdown("Ask any question about the **Federal Republic of Nigeria Constitution**. The AI uses **Hybrid Search** and **`gpt-4o-mini`** for grounded answers with article citations.")
-
+    # st.set_page_config(page_title="Constitution-AI", layout="wide")
+    # st.title("⚖️ Constitution-AI: Nigerian Constitutional Assistant")
+    # st.markdown("Ask any question about the **Federal Republic of Nigeria Constitution**. The AI uses **Hybrid Search** and **`gpt-4o-mini`** for grounded answers with article citations.")
+    
+    st.set_page_config(page_title="FMBN-AI", layout="wide")
+    st.title("🏦 FMBN-AI: Federal Mortgage Bank Assistant")
+    st.markdown(
+        "Ask any question about **FMBN and the NHF Act**. The AI uses **Hybrid Search** "
+        "on the website content and the provided **NHF Act PDF document** for grounded answers with citations." # <-- MODIFIED
+    )
     # 1. Setup the Indexes and Agent
     try:
         # We only need to call the setup_agent function, which internally
