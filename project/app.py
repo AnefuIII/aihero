@@ -1,12 +1,60 @@
 # app.py — Production-ready for FMBN-AI
 
-import streamlit as st
-import ingest
-import search_agent
-#import asyncio
-import os
+# import streamlit as st
+# import ingest
+# import search_agent
+# #import asyncio
+# import os
 from typing import Tuple, Any
 
+
+
+# ------------------------------
+# AUTO-BUILD INDEX AT STARTUP
+# ------------------------------
+import os
+import streamlit as st
+from ingest import index_website_data, load_indexes
+from search_agent import init_agent
+from sentence_transformers import SentenceTransformer
+# ---------------------------
+CHUNKS_FILE = "chunks.pkl"
+EMBEDDINGS_FILE = "embeddings.npy"
+
+if "index_loaded" not in st.session_state:
+    st.session_state.index_loaded = False
+
+if not st.session_state.index_loaded:
+    with st.spinner("Preparing knowledge base (first-time setup)..."):
+        # If files missing, run indexing
+        if not (os.path.exists(CHUNKS_FILE) and os.path.exists(EMBEDDINGS_FILE)):
+            st.info("Index files missing — running ingest.index_website_data()...")
+            index_website_data(
+                base_url="https://www.fmbn.gov.ng",
+                pdf_url="https://www.fmbn.gov.ng/sites/default/files/NHFActCapN45LFN2004.pdf",
+                max_pages=30
+            )
+        else:
+            st.info("Index files found — skipping rebuild.")
+
+        # Load index + vector index
+        aut_index, autogen_vindex = load_indexes()
+        embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+        # Initialize agent
+        st.session_state.agent = init_agent(
+            aut_index=aut_index,
+            autogen_vindex=autogen_vindex,
+            embedding_model=embedding_model,
+            repo_owner="None",
+            repo_name="None",
+            openai_api_key=st.secrets["OPENAI_API_KEY"],
+        )
+
+        st.session_state.index_loaded = True
+        st.success("Knowledge base ready!")
+
+# ---------------------------
 # ---------------------------
 # GLOBAL CONFIGURATION
 # ---------------------------
@@ -107,6 +155,7 @@ def main_app():
             with st.spinner("Running Hybrid Search & Agent..."):
                 try:
                     # Run the agent (synchronous)
+                    agent = st.session_state.agent
                     agent_output = agent.run(prompt)
                     
                     # Display the result
