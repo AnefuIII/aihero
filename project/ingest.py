@@ -201,7 +201,7 @@ def chunk_documents(docs, size: int = 2000, step: int = 1000):
 # ---------------------------
 # Production-ready indexing
 # ---------------------------
-def index_website_data_prod(
+def index_website_data(
     website_url,
     pdf_url=None,
     chunk_file="chunks.pkl",
