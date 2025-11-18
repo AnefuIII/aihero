@@ -4,6 +4,8 @@
 /day_2/data-engineering-rag/data/de-zoomcamp-processed.json
 /project/logs/
 /project/.env
+/project/chunks.pkl
+/project/embeddings.npy
 /project/data/autogen_data_processed.json
 /project/doc_files/autogen_agent.mp4
 /agentdaybooks

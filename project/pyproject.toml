@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "beautifulsoup4>=4.13.5",
     "minsearch>=0.0.5",
     "openai>=1.109.1",
+    "playwright>=1.56.0",
     "pydantic-ai>=1.0.10",
     "pypdf>=6.1.1",
     "python-dotenv>=1.1.1",
