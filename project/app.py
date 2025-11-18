@@ -80,6 +80,8 @@ def main_app():
     # Initialize Agent
     try:
         agent = setup_agent()
+
+        st.session_state.agent = agent
     except Exception as e:
         st.error("Failed to initialize the Agent or Indexes. Check your setup and secrets.")
         st.exception(e)
