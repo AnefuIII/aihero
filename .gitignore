@@ -2,6 +2,8 @@
 .envrc
 .envrc_template
 /day_2/data-engineering-rag/data/de-zoomcamp-processed.json
+/project/rag_data/chunks.pkl
+/project/rag_data/embeddings.npy
 /project/logs/
 /project/.env
 /project/data/autogen_data_processed.json
