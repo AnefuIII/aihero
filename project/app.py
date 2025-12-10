@@ -27,17 +27,14 @@ LOCAL_PDF_DIRECTORY = "pdfs_to_index"
 # ---------------------------
 @st.cache_resource(show_spinner="Initializing data (chunks, embeddings, indices)...")
 def setup_indexes() -> Tuple[Any, Any, Any]:
-    """
-    Load persisted chunks/embeddings or build them from website, remote PDF, and local PDFs.
-    """
-    # Call the new hybrid indexing function
+    # ...
     aut_index, autogen_vindex, embedding_model = ingest.index_hybrid_data(
-        website_url=WEBSITE_URL,
-        pdf_url=PDF_URL,
-        local_pdf_dir=LOCAL_PDF_DIRECTORY, # Pass the new parameter
+        website_url=None,       # <-- Force skip the website
+        pdf_url=None,           # <-- Force skip the remote PDF
+        local_pdf_dir=LOCAL_PDF_DIRECTORY, 
         chunk_file=CHUNK_FILE,
         emb_file=EMB_FILE,
-        max_pages=40,
+        max_pages=0,            # To ensure scrape_website_dynamic returns quickly if called
         headless=True
     )
     return aut_index, autogen_vindex, embedding_model
