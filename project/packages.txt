@@ -1,0 +1,4 @@
+# Required for Playwright to function in Linux environments
+libvips
+libnss3
+libfontconfig

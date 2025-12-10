@@ -7,5 +7,6 @@ sentence-transformers
 numpy
 tqdm
 pydantic-ai
+playwright==1.56.0
 # If pydantic-ai gives an error, use the name from your uv export:
 # pydantic-ai-slim
