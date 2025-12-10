@@ -16,8 +16,11 @@ WEBSITE_URL = "https://www.fmbn.gov.ng"
 PDF_URL = "https://www.fmbn.gov.ng/documents/NHF_ACT._CAP_N45.pdf"
 REPO_OWNER = "FMBN"
 REPO_NAME = "Website"
-CHUNK_FILE = "chunks.pkl"
-EMB_FILE = "embeddings.npy"
+DATA_DIR = "rag_data" # Define the data directory
+CHUNK_FILE = os.path.join(DATA_DIR, "chunks.pkl") # Point to the directory
+EMB_FILE = os.path.join(DATA_DIR, "embeddings.npy") # Point to the directory
+# ...
+LOCAL_PDF_DIRECTORY = "pdfs_to_index"
 
 # ---------------------------
 # 1️⃣ Setup Indexes (cached)
@@ -25,13 +28,13 @@ EMB_FILE = "embeddings.npy"
 @st.cache_resource(show_spinner="Initializing data (chunks, embeddings, indices)...")
 def setup_indexes() -> Tuple[Any, Any, Any]:
     """
-    Load persisted chunks/embeddings or build them on first run.
-    Returns:
-        aut_index, autogen_vindex, embedding_model
+    Load persisted chunks/embeddings or build them from website, remote PDF, and local PDFs.
     """
-    aut_index, autogen_vindex, embedding_model = ingest.index_website_data(
+    # Call the new hybrid indexing function
+    aut_index, autogen_vindex, embedding_model = ingest.index_hybrid_data(
         website_url=WEBSITE_URL,
         pdf_url=PDF_URL,
+        local_pdf_dir=LOCAL_PDF_DIRECTORY, # Pass the new parameter
         chunk_file=CHUNK_FILE,
         emb_file=EMB_FILE,
         max_pages=40,

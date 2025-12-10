@@ -1,3 +1,5 @@
+# ingest.py
+
 import io
 import os
 import time
@@ -54,6 +56,34 @@ def download_and_read_pdf(url: str):
     except requests.RequestException as e:
         print(f"[PDF] Download error: {e}")
         return []
+
+def ingest_local_pdfs(pdf_dir: str):
+    """
+    Reads all PDF files from a local directory and returns a list of documents.
+    """
+    print(f"[PDF] Starting ingestion from directory: {pdf_dir}")
+    docs = []
+    if not os.path.isdir(pdf_dir):
+        print(f"[PDF] Directory not found: {pdf_dir}")
+        return docs
+
+    for filename in os.listdir(pdf_dir):
+        if filename.lower().endswith(".pdf"):
+            pdf_path = os.path.join(pdf_dir, filename)
+            print(f"[PDF] Reading file: {pdf_path}")
+            
+            # The existing read_pdf_data can take the file path
+            doc_list = read_pdf_data(pdf_path)
+            if doc_list:
+                # The doc_list will contain one document for the whole PDF text
+                # We update the metadata to be cleaner
+                doc = doc_list[0]
+                doc["filename"] = filename # Use just the filename
+                doc["url"] = f"file://{pdf_path}" # Add a local file reference
+                docs.append(doc)
+    
+    print(f"[PDF] Finished. Documents ingested: {len(docs)}")
+    return docs
 
 # ---------------------------
 # Playwright dynamic page scraper
@@ -246,6 +276,89 @@ def index_website_data(
     print("[INDEX] Indexing complete.")
     return aut_index, autogen_vindex, embedding_model
 
+
+# ---------------------------
+# Production-ready indexing (Combined both website and remote pdf with local pdf)
+# ---------------------------
+def index_hybrid_data(
+    website_url,
+    pdf_url=None,
+    local_pdf_dir=None, # New parameter for local directory
+    chunk_file="chunks.pkl",
+    emb_file="embeddings.npy",
+    embedding_model_name="multi-qa-distilbert-cos-v1",
+    max_pages=40,
+    headless=True
+):
+    """Load persisted chunks/embeddings or crawl/build them from website, remote PDF, and local PDFs."""
+    
+    # --- Persistence Check ---
+    if os.path.exists(chunk_file) and os.path.exists(emb_file):
+        print("[INDEX] Loading persisted chunks and embeddings from disk...")
+        with open(chunk_file, "rb") as f:
+            chunks = pickle.load(f)
+        chunk_embeddings = np.load(emb_file)
+        
+    else:
+        # --- Directory Creation (CRITICAL ADDITION) ---
+        # 1. Extract the directory path from chunk_file (e.g., "rag_data")
+        data_dir = os.path.dirname(chunk_file)
+        
+        # 2. If the path exists and is non-empty, create the directory if it doesn't exist
+        if data_dir and not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+            print(f"[INDEX] Created data directory: {data_dir}")
+        # ---------------------------------------------
+
+        all_docs = []
+        
+        # 1. Scrape Website + Remote PDF (Original Logic)
+        print("[INDEX] Starting website crawl and remote PDF ingestion...")
+        # Note: scrape_website_dynamic is expected to call download_and_read_pdf internally
+        website_docs = scrape_website_dynamic(website_url, pdf_url, max_pages=max_pages, headless=headless)
+        all_docs.extend(website_docs)
+        
+        # 2. Ingest Local PDFs (New Logic)
+        if local_pdf_dir and os.path.isdir(local_pdf_dir):
+            print(f"[INDEX] Starting local PDF ingestion from: {local_pdf_dir}...")
+            # 'ingest_local_pdfs' is the new function you need to ensure is defined in ingest.py
+            local_docs = ingest_local_pdfs(local_pdf_dir)
+            all_docs.extend(local_docs)
+            
+        if not all_docs:
+            # Load embedding model early to return it
+            embedding_model = SentenceTransformer(embedding_model_name)
+            raise RuntimeError("No documents found from website or local directory. Check URLs and paths.")
+
+        chunks = chunk_documents(all_docs)
+        
+        # Embedding and Indexing (Same as before)
+        print("[INDEX] Loading embedding model...")
+        embedding_model = SentenceTransformer(embedding_model_name)
+        print(f"[INDEX] Generating embeddings for {len(chunks)} chunks...")
+        chunk_embeddings = np.array([embedding_model.encode(c["content"]) for c in tqdm(chunks)])
+        
+        # Persist to disk
+        with open(chunk_file, "wb") as f:
+            pickle.dump(chunks, f)
+        np.save(emb_file, chunk_embeddings)
+        print(f"[INDEX] Chunks and embeddings saved to disk: {chunk_file}")
+
+
+    # Build minsearch indices
+    print("[INDEX] Building text index...")
+    aut_index = Index(text_fields=["content", "filename"], keyword_fields=[])
+    aut_index.fit(chunks)
+    print("[INDEX] Building vector index...")
+    autogen_vindex = VectorSearch()
+    autogen_vindex.fit(chunk_embeddings, chunks)
+
+    # Load embedding model if not already loaded (useful if loading from disk)
+    if 'embedding_model' not in locals():
+        embedding_model = SentenceTransformer(embedding_model_name)
+
+    print("[INDEX] Indexing complete.")
+    return aut_index, autogen_vindex, embedding_model
 
 # import numpy as np
 # import io
