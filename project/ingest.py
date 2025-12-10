@@ -347,13 +347,23 @@ def index_hybrid_data(
             print("[WARNING] Continuing ingestion with local files only.")
     
     # 3. Ingest Local PDFs (New Logic - Crucial for your fix)
-    if local_pdf_dir and os.path.isdir(local_pdf_dir):
-        print(f"[INDEX] Starting local PDF ingestion from: {local_pdf_dir}...")
-        try:
-            local_docs = ingest_local_pdfs(local_pdf_dir)
-            all_docs.extend(local_docs)
-        except Exception as e:
-            print(f"[ERROR] Local PDF ingestion FAILED: {e}")
+    # 3. Ingest Local PDFs (New Logic - Crucial for your fix)
+    if local_pdf_dir:
+        if os.path.isdir(local_pdf_dir):
+            # Check if the folder is empty
+            if not os.listdir(local_pdf_dir):
+                print(f"[ERROR] Local PDF ingestion FAILED: Directory is empty: {local_pdf_dir}")
+            else:
+                print(f"[INDEX] Starting local PDF ingestion from: {local_pdf_dir}...")
+                try:
+                    # 'ingest_local_pdfs' is the new function you need to ensure is defined in ingest.py
+                    local_docs = ingest_local_pdfs(local_pdf_dir)
+                    all_docs.extend(local_docs)
+                except Exception as e:
+                    print(f"[ERROR] Local PDF processing FAILED: {e}")
+        else:
+            # This will fire if the os.path.isdir() check fails, confirming a path issue
+            print(f"[FATAL ERROR] Local PDF Directory NOT FOUND: {local_pdf_dir}")
             
     if not all_docs:
         # Load embedding model here so we can return it during the RuntimeError 

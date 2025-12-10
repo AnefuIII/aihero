@@ -16,11 +16,10 @@ WEBSITE_URL = "https://www.fmbn.gov.ng"
 PDF_URL = "https://www.fmbn.gov.ng/documents/NHF_ACT._CAP_N45.pdf"
 REPO_OWNER = "FMBN"
 REPO_NAME = "Website"
-DATA_DIR = "rag_data" # Define the data directory
-CHUNK_FILE = os.path.join(DATA_DIR, "chunks.pkl") # Point to the directory
-EMB_FILE = os.path.join(DATA_DIR, "embeddings.npy") # Point to the directory
-# ...
-LOCAL_PDF_DIRECTORY = "pdfs_to_index"
+DATA_DIR = os.path.join(os.path.dirname(__file__), "rag_data") 
+CHUNK_FILE = os.path.join(DATA_DIR, "chunks.pkl")
+EMB_FILE = os.path.join(DATA_DIR, "embeddings.npy")
+LOCAL_PDF_DIRECTORY = os.path.join(os.path.dirname(__file__), "pdfs_to_index")
 
 # ---------------------------
 # 1️⃣ Setup Indexes (cached)
