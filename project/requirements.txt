@@ -10,3 +10,29 @@ pydantic-ai
 playwright==1.56.0
 # If pydantic-ai gives an error, use the name from your uv export:
 # pydantic-ai-slim
+
+
+To adapt the topic "ESG-Linked Executive Compensation and Its Impact on Human Capital Development and Financial Performance" for Nigeria, you could focus on the current level of awareness, adoption, and adaptation of ESG-linked benefits in Nigerian organizations. Nigeria is still at an early stage of ESG adoption, with most firms either not measuring or reporting ESG, and only a minority producing integrated or sustainability reports.​
+
+Research Focus for Nigeria
+Level of ESG Awareness and Adoption: Investigate how aware Nigerian executives and organizations are of ESG-linked compensation, and what factors (regulatory, cultural, financial) influence their adoption.​
+
+Barriers to Implementation: Explore challenges such as lack of national ESG standards, regulatory gaps, limited incentives, and technical capacity gaps that hinder ESG-linked compensation in Nigeria.​
+
+Sectoral Differences: Analyze which sectors (e.g., financial services, manufacturing, oil and gas) are leading in ESG adoption and executive compensation practices, and why.​
+
+Impact on Human Capital and Performance: Assess whether early adopters of ESG-linked compensation see improvements in employee engagement, retention, and financial performance compared to non-adopters.​
+
+Justification
+Nigeria’s ESG landscape is evolving, with regulatory pressures and international integration driving change, but most firms remain at an early stage of adoption. This research would provide valuable insights into the readiness of Nigerian organizations for ESG-linked executive compensation, identify best practices, and highlight the potential benefits for human capital and financial performance.​
+
+Data Requirements
+Surveys or interviews with executives and HR managers on ESG awareness and compensation practices.​
+
+Organizational reports on ESG initiatives and executive compensation.​
+
+Performance metrics (employee engagement, turnover, financial results) for firms with and without ESG-linked compensation.​
+
+Regulatory and policy documents related to ESG in Nigeria.​
+
+This approach would make your research highly relevant to the Nigerian context and contribute to the ongoing discourse on ESG adoption and corporate governance in the country.

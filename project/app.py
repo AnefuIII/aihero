@@ -12,8 +12,8 @@ from typing import Tuple, Any
 # ---------------------------
 # GLOBAL CONFIGURATION
 # ---------------------------
-WEBSITE_URL = "https://www.fmbn.gov.ng"
-PDF_URL = "https://www.fmbn.gov.ng/documents/NHF_ACT._CAP_N45.pdf"
+WEBSITE_URL = None #"https://www.fmbn.gov.ng"
+PDF_URL = None #"https://www.fmbn.gov.ng/documents/NHF_ACT._CAP_N45.pdf"
 REPO_OWNER = "FMBN"
 REPO_NAME = "Website"
 DATA_DIR = os.path.join(os.path.dirname(__file__), "rag_data") 
@@ -67,15 +67,36 @@ def setup_agent():
 # ---------------------------
 # 3️⃣ Streamlit App
 # ---------------------------
-def main_app():
-    st.set_page_config(page_title="FMBN-AI", layout="wide")
-    st.title("🏦 FMBN-AI: Federal Mortgage Bank Assistant")
-    st.markdown(
-        "Ask any question about **FMBN and the NHF Act**. "
-        "The AI uses **Hybrid Search** on the website content and the provided **NHF Act PDF document** "
-        "for grounded answers with citations."
-    )
+# def main_app():
+#     st.set_page_config(page_title="FMBN-AI", layout="wide")
+#     #st.title("🏦 FMBN-AI: Federal Mortgage Bank Assistant")
+#     st.title("📂 Marketing AI Assistant")
+#     # st.markdown(
+#     #     "Ask any question about **FMBN**. "
+#     #     "The AI uses **Hybrid Search** on the website content and the provided **NHF Act PDF document** "
+#     #     "for grounded answers with citations."
+#     # )
+#     st.markdown(
+#         "Ask any question about **Marketing**. "
+#         "The AI uses **Hybrid Search** on the website content and the provided **NHF Act PDF document** "
+#         "for grounded answers with citations."
+#     )
 
+def main_app():
+    st.set_page_config(page_title="Marketing Strategy AI", layout="wide")
+    st.title("📈 Marketing Intelligence Assistant")
+    
+    st.markdown(
+        """
+        Ask me anything about **Marketing Strategy, Branding, or Digital Growth**.
+        
+        This AI is powered by a **Private Library** of industry-leading marketing books 
+        and specialized PDF reports. It uses **Hybrid Search** to provide:
+        * 🎯 **Direct Answers** to complex marketing questions.
+        * 📖 **Strategic Frameworks** (like SWOT, 4Ps, or AARRR) found in your documents.
+        * 📍 **Citations** so you know exactly which book or page the advice came from.
+        """
+    )
     # Initialize Agent
     try:
         agent = setup_agent()
@@ -87,11 +108,22 @@ def main_app():
         return
 
     # Initialize Chat History
+    # if "messages" not in st.session_state:
+    #     st.session_state.messages = []
+    #     st.session_state.messages.append({
+    #         "role": "assistant",
+    #         "content": "Hi! I'm ready to answer your questions about FMBN and the NHF Act. What would you like to know?"
+    #     })
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "Hi! I'm ready to answer your questions about FMBN and the NHF Act. What would you like to know?"
+            "content": (
+                "Hi there! 📈 I've analyzed your marketing library. "
+                "I'm ready to help you brainstorm strategies, explain frameworks, "
+                "or find specific insights from your PDFs. What’s on your marketing roadmap today?"
+            )
         })
 
     # Display Chat History
