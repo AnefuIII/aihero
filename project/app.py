@@ -122,7 +122,7 @@ def main_app():
             "content": (
                 "Hi there! 📈 I've analyzed your marketing library. "
                 "I'm ready to help you brainstorm strategies, explain frameworks, "
-                "or find specific insights from your PDFs. What’s on your marketing roadmap today?"
+                "or find specific insights for your marketing goals. What’s on your marketing roadmap today?"
             )
         })
 
