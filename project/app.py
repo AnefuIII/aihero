@@ -83,18 +83,23 @@ def setup_agent():
 #     )
 
 def main_app():
-    st.set_page_config(page_title="Marketing Strategy AI", layout="wide")
-    st.title("📈 Marketing Intelligence Assistant")
+    # 1. Update the browser tab title and favicon (optional)
+    st.set_page_config(page_title="NRS Tax Law Assistant 2025", layout="wide", page_icon="🇳🇬")
     
+    # 2. Update the main header to reflect the new legal context
+    st.title("⚖️ Nigeria Revenue Service (NRS) Intelligence Assistant")
+    
+    # 3. Update the description to explain the new 2025 Act
     st.markdown(
         """
-        Ask me anything about **Marketing Strategy, Branding, or Digital Growth**.
+        Ask me anything about the **Nigeria Revenue Service (Establishment) Act 2025** and the associated **Nigeria Tax Act 2025**.
         
-        This AI is powered by a **Private Library** of industry-leading marketing books 
-        and specialized PDF reports. It uses **Hybrid Search** to provide:
-        * 🎯 **Direct Answers** to complex marketing questions.
-        * 📖 **Strategic Frameworks** (like SWOT, 4Ps, or AARRR) found in your documents.
-        * 📍 **Citations** so you know exactly which book or page the advice came from.
+        This AI is powered by the **Official Extraordinary Gazette** and specialized 
+        legal summaries of the new tax reforms. It uses **Hybrid Search** to provide:
+        * 🏛️ **Legislative Clarity** on the transition from FIRS to the NRS.
+        * 📊 **Tax Rate Lookups** (Personal Income Tax, VAT, Corporate Tax, and Development Levies).
+        * 📑 **Compliance Guidelines** for small businesses and multinational enterprises.
+        * 📍 **Citations** referencing specific Sections and Parts of the 2025 Act.
         """
     )
     # Initialize Agent
@@ -120,9 +125,11 @@ def main_app():
         st.session_state.messages.append({
             "role": "assistant",
             "content": (
-                "Hi there! 📈 I've analyzed your marketing library. "
-                "I'm ready to help you brainstorm strategies, explain frameworks, "
-                "or find specific insights for your marketing goals. What’s on your marketing roadmap today?"
+                "Welcome. ⚖️ I have indexed the **Nigeria Revenue Service (NRS) Act 2025** "
+                "and the associated Extraordinary Gazette. "
+                "I can help you interpret new tax provisions, clarify compliance requirements, "
+                "or locate specific sections regarding the 2025 tax reforms. "
+                "What aspect of the new tax law would you like to explore today?"
             )
         })
 
